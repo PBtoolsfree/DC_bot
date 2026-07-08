@@ -1,0 +1,12 @@
+{
+  "TICKET_PANEL_TITLE": "Support Tickets",
+  "TICKET_PANEL_DESC": "Select a category below to open a ticket.",
+  "TICKET_OPENED": "Ticket opened successfully: {channel}",
+  "TICKET_CLOSED": "This ticket has been closed.",
+  "TICKET_CLAIMED": "Ticket claimed by {user}",
+  "TICKET_NO_PERM": "You do not have permission to do this.",
+  "TICKET_MAX_REACHED": "You already have the maximum number of open tickets.",
+  "TICKET_TRANSCRIPT_GEN": "Generating transcript...",
+  "TICKET_CONTROL_TITLE": "Ticket Controls",
+  "TICKET_CONTROL_DESC": "Support staff can use the buttons below to manage this ticket."
+}

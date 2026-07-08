@@ -1,0 +1,15 @@
+{
+  "BUTTON_VERIFICATION_TITLE": "सर्वर सत्यापन",
+  "BUTTON_VERIFICATION_DESC": "सत्यापित करने और सर्वर तक पहुंचने के लिए नीचे दिए गए बटन पर क्लिक करें।",
+  "VERIFY_BUTTON_LABEL": "सत्यापित करें",
+  "CAPTCHA_IMAGE_TITLE": "छवि कैप्चा चुनौती",
+  "CAPTCHA_MATH_TITLE": "गणित चुनौती",
+  "CAPTCHA_WORD_TITLE": "शब्द चुनौती",
+  "CAPTCHA_DESC": "आगे बढ़ने के लिए कृपया नीचे दिए गए कैप्चा को हल करें।",
+  "MODAL_SUBMIT": "प्रस्तुत करें",
+  "MODAL_LABEL": "उत्तर",
+  "VERIFICATION_SUCCESS": "आपका सत्यापन सफलतापूर्वक हो गया है! सर्वर में आपका स्वागत है।",
+  "VERIFICATION_FAILED": "सत्यापन विफल। आपके पास {attempts} प्रयास बचे हैं।",
+  "VERIFICATION_TIMEOUT": "आपका सत्यापन सत्र समाप्त हो गया है।",
+  "VERIFICATION_MANUAL": "आपका सत्यापन एक मॉडरेटर द्वारा मैन्युअल समीक्षा के लिए लंबित है।"
+}

@@ -1,0 +1,48 @@
+# ============================================================
+# Discord Management Platform — Dashboard API Dockerfile
+# ============================================================
+
+FROM python:3.10-slim AS builder
+
+WORKDIR /build
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    gcc libffi-dev libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY requirements.txt .
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
+
+FROM python:3.10-slim AS production
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libpq5 \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+COPY bot/ ./bot/
+COPY dashboard/ ./dashboard/
+COPY locales/ ./locales/
+COPY alembic/ ./alembic/
+COPY alembic.ini .
+COPY pyproject.toml .
+
+RUN groupadd -r apiuser && useradd -r -g apiuser apiuser \
+    && chown -R apiuser:apiuser /app
+USER apiuser
+
+EXPOSE 8000
+
+HEALTHCHECK --interval=15s --timeout=5s --start-period=5s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" || exit 1
+
+CMD ["uvicorn", "dashboard.backend.main:app", "--host", "0.0.0.0", "--port", "8000", "--workers", "4"]

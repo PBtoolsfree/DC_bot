@@ -1,0 +1,15 @@
+{
+  "BUTTON_VERIFICATION_TITLE": "Server Verification",
+  "BUTTON_VERIFICATION_DESC": "Click the button below to verify and access the server.",
+  "VERIFY_BUTTON_LABEL": "Verify",
+  "CAPTCHA_IMAGE_TITLE": "Image Captcha Challenge",
+  "CAPTCHA_MATH_TITLE": "Math Challenge",
+  "CAPTCHA_WORD_TITLE": "Word Challenge",
+  "CAPTCHA_DESC": "Please solve the captcha below to proceed.",
+  "MODAL_SUBMIT": "Submit",
+  "MODAL_LABEL": "Answer",
+  "VERIFICATION_SUCCESS": "You have been verified successfully! Welcome to the server.",
+  "VERIFICATION_FAILED": "Verification failed. You have {attempts} attempts remaining.",
+  "VERIFICATION_TIMEOUT": "Your verification session has timed out.",
+  "VERIFICATION_MANUAL": "Your verification is pending manual review by a moderator."
+}

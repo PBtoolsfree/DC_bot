@@ -1,0 +1,33 @@
+[Unit]
+Description=Discord Dashboard API (FastAPI/Uvicorn)
+Documentation=https://github.com/your-org/discord-management-platform
+After=network.target postgresql.service redis.service
+Requires=postgresql.service redis.service
+
+[Service]
+Type=simple
+User=discordbot
+Group=discordbot
+WorkingDirectory=/opt/discord-bot
+EnvironmentFile=/opt/discord-bot/.env
+
+ExecStart=/opt/discord-bot/venv/bin/uvicorn dashboard.backend.main:app --host 0.0.0.0 --port 8000 --workers 4
+Restart=always
+RestartSec=5
+
+# Security hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+# Resource limits
+LimitNOFILE=65536
+MemoryMax=1G
+
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=discord-dashboard
+
+[Install]
+WantedBy=multi-user.target
