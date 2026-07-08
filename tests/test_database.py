@@ -2,12 +2,16 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import pytest
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.database.models.member import ModActionType
 from bot.database.repositories.guild_repo import GuildRepository
 from bot.database.repositories.member_repo import MemberRepository
+
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 # ======================================================================
 # Guild Repository Tests

@@ -6,8 +6,12 @@ Provides data for the future Dashboard integration.
 
 from __future__ import annotations
 
-from bot.services.redis_service import RedisService
+from typing import TYPE_CHECKING
+
 from bot.utils.logger import get_logger
+
+if TYPE_CHECKING:
+    from bot.services.redis_service import RedisService
 
 logger = get_logger(__name__)
 
@@ -18,7 +22,7 @@ class StatisticsService:
     def __init__(self, redis: RedisService) -> None:
         self.redis = redis
 
-    async def get_guild_stats(self, guild_id: int) -> dict[str, int]:
+    async def get_guild_stats(self, _guild_id: int) -> dict[str, int]:
         """Fetch real-time automod violation statistics for a guild."""
         # This will be fully implemented when the Dashboard API is built (Module 8).
         # For now, it provides a structure to read the Redis counters.

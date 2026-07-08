@@ -7,12 +7,15 @@ whitelists/blacklists, and scam domain detection.
 from __future__ import annotations
 
 import re
+from typing import TYPE_CHECKING
 from urllib.parse import urlparse
 
 import discord
 
-from bot.database.schemas.automod import AutoModSettings, RuleConfig
 from bot.utils.logger import get_logger
+
+if TYPE_CHECKING:
+    from bot.database.schemas.automod import AutoModSettings, RuleConfig
 
 logger = get_logger(__name__)
 
@@ -61,7 +64,10 @@ class LinkService:
                         domain = domain[4:]
                     domains.add(domain)
             except Exception:
-                pass
+                import contextlib
+
+                with contextlib.suppress(Exception):
+                    pass
         return domains
 
     async def check_message(
@@ -117,9 +123,11 @@ class LinkService:
         ):
             for domain in domains:
                 # If whitelist is populated, ONLY those are allowed
-                if settings.links_external.whitelist:
-                    if domain not in settings.links_external.whitelist:
-                        return "links_external"
+                if (
+                    settings.links_external.whitelist
+                    and domain not in settings.links_external.whitelist
+                ):
+                    return "links_external"
                 # Check blacklist
                 if domain in settings.links_external.blacklist:
                     return "links_external"

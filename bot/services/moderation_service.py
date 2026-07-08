@@ -3,11 +3,9 @@
 from __future__ import annotations
 
 import re
-from datetime import timedelta
 from typing import TYPE_CHECKING, Literal
 
 import discord
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.database.models.member import ModActionType
 from bot.database.repositories.member_repo import MemberRepository
@@ -16,6 +14,10 @@ from bot.utils.logger import get_logger
 from bot.utils.permissions import check_bot_hierarchy, check_hierarchy
 
 if TYPE_CHECKING:
+    from datetime import timedelta
+
+    from sqlalchemy.ext.asyncio import AsyncSession
+
     from bot.core.bot import ManagementBot
 
 logger = get_logger(__name__)
@@ -311,7 +313,7 @@ class ModerationService:
             try:
                 compiled_regex = re.compile(regex_pattern, re.IGNORECASE)
             except re.error as e:
-                raise ModerationError(f"Invalid regex pattern: {e}")
+                raise ModerationError(f"Invalid regex pattern: {e}") from None
 
         def check(m: discord.Message) -> bool:
             # Pinned status
@@ -338,10 +340,7 @@ class ModerationService:
             if has_embeds and not m.embeds:
                 return False
             # Links
-            if has_links and "http" not in m.content.lower():
-                return False
-
-            return True
+            return not (has_links and "http" not in m.content.lower())
 
         deleted = await channel.purge(
             limit=amount,

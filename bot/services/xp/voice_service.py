@@ -10,7 +10,9 @@ class VoiceSessionService:
     """Tracks time spent in voice using Redis (mocked here as in-memory)."""
 
     # Mock Redis: user_id -> join_time
-    _active_sessions: dict[int, float] = {}
+    import typing
+
+    _active_sessions: typing.ClassVar[dict[int, float]] = {}
 
     @classmethod
     async def join_voice(cls, user_id: int) -> None:

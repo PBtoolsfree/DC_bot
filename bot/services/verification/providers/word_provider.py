@@ -1,7 +1,5 @@
 """Word CAPTCHA provider."""
 
-import random
-
 from bot.services.verification.providers.base import CaptchaChallenge, CaptchaProvider
 
 WORDS = [
@@ -25,9 +23,11 @@ class WordCaptchaProvider(CaptchaProvider):
     def provider_id(self) -> str:
         return "word"
 
-    async def generate_challenge(self, user_id: int) -> CaptchaChallenge:
+    async def generate_challenge(self, _user_id: int) -> CaptchaChallenge:
         """Pick a random word and ask the user to type it."""
-        expected = random.choice(WORDS)
+        import secrets
+
+        expected = secrets.choice(WORDS)
 
         # Obfuscate the prompt slightly to prevent simple regex bots
         obfuscated = expected.replace("", " ").strip()

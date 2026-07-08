@@ -29,8 +29,7 @@ class PDFTranscriptProvider(TranscriptProvider):
             from weasyprint import HTML
 
             # 2. Convert HTML to PDF
-            pdf_bytes = HTML(string=html_bytes.decode("utf-8")).write_pdf()
-            return pdf_bytes  # type: ignore
+            return HTML(string=html_bytes.decode("utf-8")).write_pdf()
         except Exception as e:
             logger.error("pdf_generation_failed", exc_info=e)
             # Fallback to HTML bytes as approved in the mega-prompt

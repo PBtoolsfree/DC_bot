@@ -2,15 +2,19 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import discord
 from discord.ext import commands
 
-from bot.core.bot import ManagementBot
 from bot.database.repositories.guild_repo import GuildRepository
 from bot.database.schemas.logging import LoggingSettings
 from bot.services.logging.audit_service import AuditLogService
 from bot.services.logging.logging_service import LoggingService
 from bot.utils.embed_builder import EmbedBuilder
+
+if TYPE_CHECKING:
+    from bot.core.bot import ManagementBot
 
 
 class AdvancedLogsCog(commands.Cog):

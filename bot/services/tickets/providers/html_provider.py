@@ -27,7 +27,7 @@ HTML_TEMPLATE = """
         <h2>Ticket Transcript: #{{ ticket.id }}</h2>
         <p>Owner ID: {{ ticket.owner_id }} | Status: {{ ticket.status }}</p>
     </div>
-    
+
     <div class="messages">
         {% for m in messages %}
         <div class="message">
@@ -61,7 +61,7 @@ class HTMLTranscriptProvider(TranscriptProvider):
     async def generate(self, ticket: Ticket, messages: list[TicketMessage]) -> bytes:
         """Generate HTML using Jinja2."""
 
-        env = Environment(loader=BaseLoader())
+        env = Environment(loader=BaseLoader(), autoescape=True)
         template = env.from_string(HTML_TEMPLATE)
 
         html = template.render(ticket=ticket, messages=messages)

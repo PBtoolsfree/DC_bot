@@ -9,12 +9,15 @@ from __future__ import annotations
 
 import hashlib
 import re
+from typing import TYPE_CHECKING
 
 import discord
 
-from bot.database.schemas.automod import AutoModSettings, RuleConfig
-from bot.services.redis_service import RedisService
 from bot.utils.logger import get_logger
+
+if TYPE_CHECKING:
+    from bot.database.schemas.automod import AutoModSettings, RuleConfig
+    from bot.services.redis_service import RedisService
 
 logger = get_logger(__name__)
 
@@ -110,11 +113,12 @@ class SpamService:
                 return "spam_emojis"
 
         # 5. Attachment/Media Spam
-        if settings.spam_attachments.enabled and not self._check_ignored(
-            message, settings.spam_attachments
+        if (
+            settings.spam_attachments.enabled
+            and not self._check_ignored(message, settings.spam_attachments)
+            and len(message.attachments) > (settings.spam_attachments.threshold or 3)
         ):
-            if len(message.attachments) > (settings.spam_attachments.threshold or 3):
-                return "spam_attachments"
+            return "spam_attachments"
 
         # 6. Duplicate Messages (Rate limit on Content Hash)
         if (

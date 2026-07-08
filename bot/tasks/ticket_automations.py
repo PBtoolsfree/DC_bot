@@ -49,7 +49,8 @@ class TicketAutomationsTask(commands.Cog):
                             channel = guild.get_channel(ticket.channel_id)
                             if channel:
                                 await channel.send(  # type: ignore
-                                    f"⚠️ **SLA BREACH**! This ticket has been waiting for more than {category.sla_response_hours} hours."
+                                    f"⚠️ **SLA BREACH**! This ticket has been waiting "
+                                    f"for more than {category.sla_response_hours} hours."
                                 )
 
                         # Log Event

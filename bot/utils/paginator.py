@@ -13,6 +13,8 @@ Usage:
 
 from __future__ import annotations
 
+import contextlib
+
 import discord
 
 from bot.utils.constants import Emojis
@@ -70,8 +72,7 @@ class PaginatorView(discord.ui.View):
 
     def _get_current_embed(self) -> discord.Embed:
         """Get the embed for the current page with footer updated."""
-        embed = self.pages[self.current_page]
-        return embed
+        return self.pages[self.current_page]
 
     async def interaction_check(self, interaction: discord.Interaction) -> bool:
         """Ensure only the original author can interact."""
@@ -90,10 +91,8 @@ class PaginatorView(discord.ui.View):
                 item.disabled = True
 
         if self.message is not None:
-            try:
+            with contextlib.suppress(discord.NotFound):
                 await self.message.edit(view=self)
-            except discord.NotFound:
-                pass
 
     async def start(self, interaction: discord.Interaction) -> None:
         """Send the first page and attach the view.
@@ -130,7 +129,7 @@ class PaginatorView(discord.ui.View):
         custom_id="paginator:first",
     )
     async def first_page_button(
-        self, interaction: discord.Interaction, button: discord.ui.Button[PaginatorView]
+        self, interaction: discord.Interaction, _button: discord.ui.Button[PaginatorView]
     ) -> None:
         """Jump to the first page."""
         self.current_page = 0
@@ -146,7 +145,7 @@ class PaginatorView(discord.ui.View):
         custom_id="paginator:prev",
     )
     async def prev_button(
-        self, interaction: discord.Interaction, button: discord.ui.Button[PaginatorView]
+        self, interaction: discord.Interaction, _button: discord.ui.Button[PaginatorView]
     ) -> None:
         """Go to the previous page."""
         self.current_page = max(0, self.current_page - 1)
@@ -163,7 +162,7 @@ class PaginatorView(discord.ui.View):
         custom_id="paginator:counter",
     )
     async def page_counter(
-        self, interaction: discord.Interaction, button: discord.ui.Button[PaginatorView]
+        self, interaction: discord.Interaction, _button: discord.ui.Button[PaginatorView]
     ) -> None:
         """Page counter (non-interactive)."""
         await interaction.response.defer()
@@ -174,7 +173,7 @@ class PaginatorView(discord.ui.View):
         custom_id="paginator:next",
     )
     async def next_button(
-        self, interaction: discord.Interaction, button: discord.ui.Button[PaginatorView]
+        self, interaction: discord.Interaction, _button: discord.ui.Button[PaginatorView]
     ) -> None:
         """Go to the next page."""
         self.current_page = min(self.total_pages - 1, self.current_page + 1)
@@ -190,7 +189,7 @@ class PaginatorView(discord.ui.View):
         custom_id="paginator:last",
     )
     async def last_page_button(
-        self, interaction: discord.Interaction, button: discord.ui.Button[PaginatorView]
+        self, interaction: discord.Interaction, _button: discord.ui.Button[PaginatorView]
     ) -> None:
         """Jump to the last page."""
         self.current_page = self.total_pages - 1
@@ -206,7 +205,7 @@ class PaginatorView(discord.ui.View):
         custom_id="paginator:stop",
     )
     async def stop_button(
-        self, interaction: discord.Interaction, button: discord.ui.Button[PaginatorView]
+        self, interaction: discord.Interaction, _button: discord.ui.Button[PaginatorView]
     ) -> None:
         """Stop the paginator and remove buttons."""
         for item in self.children:

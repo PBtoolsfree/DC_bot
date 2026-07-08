@@ -15,18 +15,19 @@ class RestoreService:
     """Handles parsing JSON backups and applying them to Discord."""
 
     @staticmethod
-    async def get_diff(session: AsyncSession, guild: discord.Guild, backup_id: int) -> dict:
+    async def get_diff(
+        session: AsyncSession, _guild: discord.Guild, backup_id: int
+    ) -> dict:
         """Calculates what will be created/deleted/modified."""
         provider = PostgresStorageProvider(session)
         payload = await provider.load_backup(f"pg://server_backups/{backup_id}")
 
         # In a full implementation, we'd compare payload["roles"] with guild.roles
-        diff = {
+        return {
             "roles_to_create": len(payload.get("roles", [])),
             "channels_to_create": len(payload.get("channels", [])),
             "categories_to_create": len(payload.get("categories", [])),
         }
-        return diff
 
     @staticmethod
     async def execute_restore(
@@ -34,7 +35,7 @@ class RestoreService:
     ) -> bool:
         """Applies the backup. NOTE: This is extremely destructive."""
         provider = PostgresStorageProvider(session)
-        payload = await provider.load_backup(f"pg://server_backups/{backup_id}")
+        await provider.load_backup(f"pg://server_backups/{backup_id}")
 
         try:
             # 1. Delete existing channels (except the one we are running the command in, usually)

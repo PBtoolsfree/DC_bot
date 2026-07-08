@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import discord
 
-from bot.database.schemas.security import SecuritySettings
+if TYPE_CHECKING:
+    from bot.database.schemas.security import SecuritySettings
 
 
 class RiskEngineService:

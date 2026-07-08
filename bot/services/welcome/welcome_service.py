@@ -54,7 +54,7 @@ class WelcomeService:
 
                 file = discord.File(fp=io.BytesIO(img_bytes), filename="welcome.png")
             except Exception:
-                pass  # Fallback to text only
+                file = None  # Fallback to text only
 
         await channel.send(content=content, file=file)  # type: ignore
 

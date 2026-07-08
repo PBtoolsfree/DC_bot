@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 from datetime import timedelta
+from typing import TYPE_CHECKING
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import discord
 import pytest
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.database.repositories.guild_repo import GuildRepository
 from bot.database.repositories.member_repo import MemberRepository
@@ -19,6 +19,9 @@ from bot.services.moderation_service import (
     ModerationService,
 )
 from bot.services.punishment_service import PunishmentService
+
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 
 @pytest.fixture
@@ -265,7 +268,7 @@ class TestModerationService:
         channel.set_permissions.assert_called_once()
 
         # Verify send_messages was set to False
-        args, kwargs = channel.set_permissions.call_args
+        _args, kwargs = channel.set_permissions.call_args
         assert kwargs["overwrite"].send_messages is False
 
         actions = await MemberRepository.get_actions(db_session, mock_guild.id)

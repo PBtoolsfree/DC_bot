@@ -7,12 +7,15 @@ The caller (typically a service layer) manages the session lifecycle.
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from typing import TYPE_CHECKING
 
 from sqlalchemy import func, select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.database.models.member import MemberData, ModAction, ModActionType, Warning
 from bot.utils.logger import get_logger
+
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = get_logger(__name__)
 

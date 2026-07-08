@@ -95,9 +95,9 @@ async def update_verification_settings(
             try:
                 update_data[key] = int(update_data[key])
             except ValueError:
-                raise HTTPException(status_code=400, detail=f"Invalid ID for {key}")
+                raise HTTPException(status_code=400, detail=f"Invalid ID for {key}") from None
 
-    settings = await VerificationRepository.upsert_settings(session, guild_id, **update_data)
+    await VerificationRepository.upsert_settings(session, guild_id, **update_data)
 
     # In a full app, also log to DashboardAuditLog
 

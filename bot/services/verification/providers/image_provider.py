@@ -1,11 +1,13 @@
 """Image CAPTCHA provider."""
 
-import random
-from io import BytesIO
+from typing import TYPE_CHECKING
 
 from captcha.image import ImageCaptcha
 
 from bot.services.verification.providers.base import CaptchaChallenge, CaptchaProvider
+
+if TYPE_CHECKING:
+    from io import BytesIO
 
 
 class ImageCaptchaProvider(CaptchaProvider):
@@ -15,11 +17,13 @@ class ImageCaptchaProvider(CaptchaProvider):
     def provider_id(self) -> str:
         return "image"
 
-    async def generate_challenge(self, user_id: int) -> CaptchaChallenge:
+    async def generate_challenge(self, _user_id: int) -> CaptchaChallenge:
         """Generate a random 6-character alphanumeric image."""
         # Use simple alphanumeric characters avoiding confusing ones like l/1/I or O/0
         chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
-        expected = "".join(random.choices(chars, k=6))
+        import secrets
+
+        expected = "".join(secrets.choice(chars) for _ in range(6))
 
         image = ImageCaptcha(width=280, height=90)
         data: BytesIO = image.generate(expected)

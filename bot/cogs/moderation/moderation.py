@@ -242,7 +242,8 @@ class ModerationCog(commands.Cog, name="Moderation"):
 
             embed = EmbedBuilder.success(
                 title="Member Timed Out",
-                description=f"Successfully timed out {target.mention} for {format_duration(time_delta)}.",
+                description=f"Successfully timed out {target.mention} "
+                f"for {format_duration(time_delta)}.",
             )
             await interaction.followup.send(embed=embed)
         except Exception as e:

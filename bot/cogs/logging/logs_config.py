@@ -2,15 +2,19 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import discord
 from discord import app_commands
 from discord.ext import commands
 
-from bot.core.bot import ManagementBot
 from bot.services.logging.export_service import ExportService
 from bot.services.logging.search_service import SearchService
 from bot.utils.embed_builder import EmbedBuilder
 from bot.utils.permissions import PermissionLevel, require_permission
+
+if TYPE_CHECKING:
+    from bot.core.bot import ManagementBot
 
 
 @app_commands.default_permissions(administrator=True)

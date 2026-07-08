@@ -1,0 +1,86 @@
+Test Suite	Run tests	2026-07-08T10:26:16.6569779Z ==================================== ERRORS ====================================
+Test Suite	Run tests	2026-07-08T10:26:16.6570797Z ________________ ERROR collecting tests/test_dashboard_auth.py _________________
+Test Suite	Run tests	2026-07-08T10:26:16.6572382Z ImportError while importing test module '/home/runner/work/DC_bot/DC_bot/tests/test_dashboard_auth.py'.
+Test Suite	Run tests	2026-07-08T10:26:16.6574097Z Hint: make sure your test modules/packages have valid Python names.
+Test Suite	Run tests	2026-07-08T10:26:16.6575107Z Traceback:
+Test Suite	Run tests	2026-07-08T10:26:16.6576384Z /opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/site-packages/_pytest/python.py:508: in importtestmodule
+Test Suite	Run tests	2026-07-08T10:26:16.6577654Z     mod = import_path(
+Test Suite	Run tests	2026-07-08T10:26:16.6578461Z /opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/site-packages/_pytest/pathlib.py:596: in import_path
+Test Suite	Run tests	2026-07-08T10:26:16.6579577Z     importlib.import_module(module_name)
+Test Suite	Run tests	2026-07-08T10:26:16.6580262Z /opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/importlib/__init__.py:126: in import_module
+Test Suite	Run tests	2026-07-08T10:26:16.6581535Z     return _bootstrap._gcd_import(name[level:], package, level)
+Test Suite	Run tests	2026-07-08T10:26:16.6582088Z <frozen importlib._bootstrap>:1050: in _gcd_import
+Test Suite	Run tests	2026-07-08T10:26:16.6582504Z     ???
+Test Suite	Run tests	2026-07-08T10:26:16.6582835Z <frozen importlib._bootstrap>:1027: in _find_and_load
+Test Suite	Run tests	2026-07-08T10:26:16.6583271Z     ???
+Test Suite	Run tests	2026-07-08T10:26:16.6583637Z <frozen importlib._bootstrap>:1006: in _find_and_load_unlocked
+Test Suite	Run tests	2026-07-08T10:26:16.6584134Z     ???
+Test Suite	Run tests	2026-07-08T10:26:16.6584448Z <frozen importlib._bootstrap>:688: in _load_unlocked
+Test Suite	Run tests	2026-07-08T10:26:16.6584874Z     ???
+Test Suite	Run tests	2026-07-08T10:26:16.6585548Z /opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+Test Suite	Run tests	2026-07-08T10:26:16.6586359Z     exec(co, module.__dict__)
+Test Suite	Run tests	2026-07-08T10:26:16.6586728Z tests/test_dashboard_auth.py:8: in <module>
+Test Suite	Run tests	2026-07-08T10:26:16.6587277Z     from dashboard.backend.core.security import create_access_token
+Test Suite	Run tests	2026-07-08T10:26:16.6587858Z dashboard/backend/core/security.py:9: in <module>
+Test Suite	Run tests	2026-07-08T10:26:16.6588316Z     from jose import JWTError, jwt
+Test Suite	Run tests	2026-07-08T10:26:16.6589094Z E   ModuleNotFoundError: No module named 'jose'
+Test Suite	Run tests	2026-07-08T10:26:16.6589866Z ____________ ERROR collecting tests/test_verification_providers.py _____________
+Test Suite	Run tests	2026-07-08T10:26:16.6590557Z ImportError while importing test module '/home/runner/work/DC_bot/DC_bot/tests/test_verification_providers.py'.
+Test Suite	Run tests	2026-07-08T10:26:16.6591214Z Hint: make sure your test modules/packages have valid Python names.
+Test Suite	Run tests	2026-07-08T10:26:16.6591580Z Traceback:
+Test Suite	Run tests	2026-07-08T10:26:16.6592047Z /opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/site-packages/_pytest/python.py:508: in importtestmodule
+Test Suite	Run tests	2026-07-08T10:26:16.6592604Z     mod = import_path(
+Test Suite	Run tests	2026-07-08T10:26:16.6593073Z /opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/site-packages/_pytest/pathlib.py:596: in import_path
+Test Suite	Run tests	2026-07-08T10:26:16.6593620Z     importlib.import_module(module_name)
+Test Suite	Run tests	2026-07-08T10:26:16.6594106Z /opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/importlib/__init__.py:126: in import_module
+Test Suite	Run tests	2026-07-08T10:26:16.6594676Z     return _bootstrap._gcd_import(name[level:], package, level)
+Test Suite	Run tests	2026-07-08T10:26:16.6595074Z <frozen importlib._bootstrap>:1050: in _gcd_import
+Test Suite	Run tests	2026-07-08T10:26:16.6595381Z     ???
+Test Suite	Run tests	2026-07-08T10:26:16.6595617Z <frozen importlib._bootstrap>:1027: in _find_and_load
+Test Suite	Run tests	2026-07-08T10:26:16.6595927Z     ???
+Test Suite	Run tests	2026-07-08T10:26:16.6596194Z <frozen importlib._bootstrap>:1006: in _find_and_load_unlocked
+Test Suite	Run tests	2026-07-08T10:26:16.6596541Z     ???
+Test Suite	Run tests	2026-07-08T10:26:16.6596771Z <frozen importlib._bootstrap>:688: in _load_unlocked
+Test Suite	Run tests	2026-07-08T10:26:16.6597077Z     ???
+Test Suite	Run tests	2026-07-08T10:26:16.6597567Z /opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+Test Suite	Run tests	2026-07-08T10:26:16.6598143Z     exec(co, module.__dict__)
+Test Suite	Run tests	2026-07-08T10:26:16.6598445Z tests/test_verification_providers.py:5: in <module>
+Test Suite	Run tests	2026-07-08T10:26:16.6599189Z     from bot.services.verification.providers.image_provider import ImageCaptchaProvider
+Test Suite	Run tests	2026-07-08T10:26:16.6599766Z bot/services/verification/providers/image_provider.py:6: in <module>
+Test Suite	Run tests	2026-07-08T10:26:16.6600175Z     from captcha.image import ImageCaptcha
+Test Suite	Run tests	2026-07-08T10:26:16.6600500Z E   ModuleNotFoundError: No module named 'captcha'
+Test Suite	Run tests	2026-07-08T10:26:16.6600929Z _____________ ERROR collecting tests/test_verification_services.py _____________
+Test Suite	Run tests	2026-07-08T10:26:16.6601564Z ImportError while importing test module '/home/runner/work/DC_bot/DC_bot/tests/test_verification_services.py'.
+Test Suite	Run tests	2026-07-08T10:26:16.6602160Z Hint: make sure your test modules/packages have valid Python names.
+Test Suite	Run tests	2026-07-08T10:26:16.6602505Z Traceback:
+Test Suite	Run tests	2026-07-08T10:26:16.6602942Z /opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/site-packages/_pytest/python.py:508: in importtestmodule
+Test Suite	Run tests	2026-07-08T10:26:16.6603460Z     mod = import_path(
+Test Suite	Run tests	2026-07-08T10:26:16.6603903Z /opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/site-packages/_pytest/pathlib.py:596: in import_path
+Test Suite	Run tests	2026-07-08T10:26:16.6604579Z     importlib.import_module(module_name)
+Test Suite	Run tests	2026-07-08T10:26:16.6605039Z /opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/importlib/__init__.py:126: in import_module
+Test Suite	Run tests	2026-07-08T10:26:16.6605573Z     return _bootstrap._gcd_import(name[level:], package, level)
+Test Suite	Run tests	2026-07-08T10:26:16.6605943Z <frozen importlib._bootstrap>:1050: in _gcd_import
+Test Suite	Run tests	2026-07-08T10:26:16.6606231Z     ???
+Test Suite	Run tests	2026-07-08T10:26:16.6606455Z <frozen importlib._bootstrap>:1027: in _find_and_load
+Test Suite	Run tests	2026-07-08T10:26:16.6606752Z     ???
+Test Suite	Run tests	2026-07-08T10:26:16.6607002Z <frozen importlib._bootstrap>:1006: in _find_and_load_unlocked
+Test Suite	Run tests	2026-07-08T10:26:16.6607313Z     ???
+Test Suite	Run tests	2026-07-08T10:26:16.6607526Z <frozen importlib._bootstrap>:688: in _load_unlocked
+Test Suite	Run tests	2026-07-08T10:26:16.6607808Z     ???
+Test Suite	Run tests	2026-07-08T10:26:16.6608261Z /opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+Test Suite	Run tests	2026-07-08T10:26:16.6609162Z     exec(co, module.__dict__)
+Test Suite	Run tests	2026-07-08T10:26:16.6609590Z tests/test_verification_services.py:8: in <module>
+Test Suite	Run tests	2026-07-08T10:26:16.6610303Z     from bot.services.verification.verification_service import VerificationService
+Test Suite	Run tests	2026-07-08T10:26:16.6611401Z bot/services/verification/verification_service.py:17: in <module>
+Test Suite	Run tests	2026-07-08T10:26:16.6612230Z     from bot.services.verification.providers.image_provider import ImageCaptchaProvider
+Test Suite	Run tests	2026-07-08T10:26:16.6613150Z bot/services/verification/providers/image_provider.py:6: in <module>
+Test Suite	Run tests	2026-07-08T10:26:16.6613807Z     from captcha.image import ImageCaptcha
+Test Suite	Run tests	2026-07-08T10:26:16.6614352Z E   ModuleNotFoundError: No module named 'captcha'
+Test Suite	Run tests	2026-07-08T10:26:16.6614979Z =============================== warnings summary ===============================
+Test Suite	Run tests	2026-07-08T10:26:16.6615944Z ../../../../../opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/site-packages/fastapi/testclient.py:1
+Test Suite	Run tests	2026-07-08T10:26:16.6617983Z   /opt/hostedtoolcache/Python/3.10.20/x64/lib/python3.10/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+Test Suite	Run tests	2026-07-08T10:26:16.6619963Z     from starlette.testclient import TestClient as TestClient  # noqa
+Test Suite	Run tests	2026-07-08T10:26:16.6620278Z
+Test Suite	Run tests	2026-07-08T10:26:16.6620509Z -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+Test Suite	Run tests	2026-07-08T10:26:16.6620966Z =========================== short test summary info ============================
+Test Suite	Run tests	2026-07-08T10:26:16.6620966Z =========================== short test summary info ============================

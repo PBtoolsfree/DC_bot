@@ -3,12 +3,16 @@
 from __future__ import annotations
 
 import datetime
-from collections.abc import Sequence
+from typing import TYPE_CHECKING
 
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from bot.database.models.logging import ActionLog
 from bot.database.repositories.log_repo import LogRepository
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from sqlalchemy.ext.asyncio import AsyncSession
+
+    from bot.database.models.logging import ActionLog
 
 
 class SearchService:

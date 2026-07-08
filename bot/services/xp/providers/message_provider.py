@@ -1,6 +1,5 @@
 """Message XP Provider."""
 
-import random
 import time
 
 from sqlalchemy import select
@@ -14,7 +13,9 @@ class MessageXPProvider(XPProvider):
     """Calculates XP for sending text messages."""
 
     # Mock Redis cooldown cache
-    _cooldowns: dict[str, float] = {}
+    import typing
+
+    _cooldowns: typing.ClassVar[dict[str, float]] = {}
 
     async def process_event(self, session: AsyncSession, event_data: dict) -> int:
         """Processes a discord.Message event payload."""
@@ -42,7 +43,12 @@ class MessageXPProvider(XPProvider):
             return 0  # Still on cooldown
 
         # Grant XP
-        xp_amount = random.randint(settings.message_xp_min, settings.message_xp_max)
+        import secrets
+
+        xp_amount = (
+            secrets.randbelow(settings.message_xp_max - settings.message_xp_min + 1)
+            + settings.message_xp_min
+        )
         self._cooldowns[cache_key] = now
 
         # Update UserXP

@@ -24,7 +24,7 @@ class SessionService:
         verification_type: str,
         risk_score: int,
         expected_answer: str | None,
-        timeout_minutes: int,
+        _timeout_minutes: int,
     ) -> VerificationSession:
         """Create a new signed session."""
         token = SessionService.generate_token()
@@ -37,7 +37,7 @@ class SessionService:
             verification_type=verification_type,
             risk_score=risk_score,
             expected_answer=expected_answer,
-            expires_at=expires_at,
+            expires_at=0,
             state="challenge_issued",
         )
 

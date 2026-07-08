@@ -14,7 +14,8 @@ class StreamingService:
 
     def __init__(self) -> None:
         self._connected = False
-        # In a real implementation, this would hold a reference to an aioredis connection or a WebSocket server
+        # In a real implementation, this would hold a reference to an aioredis connection
+        # or a WebSocket server
 
     def broadcast_event(
         self, guild_id: int, action_type: str, severity: int, payload: dict[str, Any]

@@ -2,12 +2,18 @@
 
 from __future__ import annotations
 
-import discord
-from sqlalchemy.ext.asyncio import AsyncSession
+import contextlib
+from typing import TYPE_CHECKING
 
-from bot.database.models.security import IncidentReport
+import discord
+
 from bot.database.repositories.security_repo import SecurityRepository
 from bot.utils.embed_builder import EmbedBuilder
+
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
+
+    from bot.database.models.security import IncidentReport
 
 
 class IncidentService:
@@ -54,9 +60,7 @@ class IncidentService:
                 embed.add_field(name="Rollback Status", value=rollback_status, inline=True)
                 embed.set_footer(text=f"Incident ID: {incident.id}")
 
-                try:
+                with contextlib.suppress(discord.HTTPException):
                     await channel.send(embed=embed)
-                except discord.HTTPException:
-                    pass
 
         return incident

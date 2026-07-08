@@ -54,7 +54,7 @@ class TestModerationCog:
         moderation_cog.mod_service.kick_member.assert_called_once()
         mock_interaction.followup.send.assert_called_once()
 
-        args, kwargs = mock_interaction.followup.send.call_args
+        _args, kwargs = mock_interaction.followup.send.call_args
         embed = kwargs["embed"]
         assert embed.title == "✅ Member Kicked"
 
@@ -77,7 +77,7 @@ class TestModerationCog:
         )
 
         # Verify the error was caught and an error embed was sent
-        args, kwargs = mock_interaction.followup.send.call_args
+        _args, kwargs = mock_interaction.followup.send.call_args
         embed = kwargs["embed"]
         assert embed.title == "❌ Moderation Failed"
         assert "Outranked" in embed.description
@@ -101,7 +101,7 @@ class TestModerationCog:
 
         await moderation_cog.warn.callback(moderation_cog, mock_interaction, mock_member, "Spam")
 
-        args, kwargs = mock_interaction.followup.send.call_args
+        _args, kwargs = mock_interaction.followup.send.call_args
         embed = kwargs["embed"]
         assert "Warning ID: `42`" in embed.description
         assert "Auto-Punishment Applied" in embed.description
@@ -127,7 +127,7 @@ class TestModerationCog:
         )
 
         moderation_cog.mod_service.purge_messages.assert_called_once()
-        args, kwargs = mock_interaction.followup.send.call_args
+        _args, kwargs = mock_interaction.followup.send.call_args
         embed = kwargs["embed"]
         assert "Successfully deleted 15 messages" in embed.description
 
@@ -142,7 +142,7 @@ class TestModerationCog:
 
         await moderation_cog.purge.callback(moderation_cog, mock_interaction, amount=10)
 
-        args, kwargs = mock_interaction.followup.send.call_args
+        _args, kwargs = mock_interaction.followup.send.call_args
         embed = kwargs["embed"]
         assert "Cannot purge in this channel type" in embed.description
 
@@ -157,7 +157,7 @@ class TestModerationCog:
             moderation_cog, mock_interaction, amount=10, bots_only=True, humans_only=True
         )
 
-        args, kwargs = mock_interaction.response.send_message.call_args
+        _args, kwargs = mock_interaction.response.send_message.call_args
         embed = kwargs["embed"]
         assert "Cannot specify both bots_only and humans_only" in embed.description
 
@@ -178,7 +178,7 @@ class TestModerationCog:
             moderation_cog, mock_interaction, mock_member, duration="invalid", reason="Test"
         )
 
-        args, kwargs = mock_interaction.followup.send.call_args
+        _args, kwargs = mock_interaction.followup.send.call_args
         embed = kwargs["embed"]
         assert embed.title == "❌ Moderation Failed"
         assert "Could not parse duration" in embed.description

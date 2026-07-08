@@ -10,7 +10,6 @@ in both slash commands and context menu commands. Includes:
 
 from __future__ import annotations
 
-from collections.abc import Callable
 from enum import IntEnum
 from functools import wraps
 from typing import TYPE_CHECKING, Any, Concatenate, ParamSpec, TypeVar
@@ -21,6 +20,8 @@ from bot.utils.constants import Emojis
 from bot.utils.logger import get_logger
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from bot.core.bot import ManagementBot
 
 logger = get_logger(__name__)

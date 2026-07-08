@@ -31,10 +31,10 @@ class ConnectionManager:
         """Send a JSON message to all clients watching a specific guild."""
         if guild_id in self.active_connections:
             for connection in self.active_connections[guild_id]:
-                try:
+                import contextlib
+
+                with contextlib.suppress(Exception):
                     await connection.send_json(message)
-                except Exception:
-                    pass  # Handle stale connections
 
 
 ws_manager = ConnectionManager()

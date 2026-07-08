@@ -62,7 +62,8 @@ class BackupService:
         session.add(backup)
         await session.flush()
 
-        # In production, we might also hand this to S3 via a provider, but here we just use Postgres.
+        # In production, we might also hand this to S3 via a provider,
+        # but here we just use Postgres.
         provider = PostgresStorageProvider(session)
         await provider.save_backup(backup.id, payload)
 

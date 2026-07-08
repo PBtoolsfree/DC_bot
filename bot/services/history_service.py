@@ -2,12 +2,16 @@
 
 from __future__ import annotations
 
-import discord
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import TYPE_CHECKING
 
-from bot.database.models.member import ModActionType
 from bot.database.repositories.member_repo import MemberRepository
 from bot.utils.embed_builder import EmbedBuilder
+
+if TYPE_CHECKING:
+    import discord
+    from sqlalchemy.ext.asyncio import AsyncSession
+
+    from bot.database.models.member import ModActionType
 
 
 class HistoryService:
@@ -59,7 +63,8 @@ class HistoryService:
 
             embed = EmbedBuilder.info(
                 title=f"History for {user}",
-                description=f"**Total Actions:** {total_actions}\n**Active Warnings:** {active_warnings}",
+                description=f"**Total Actions:** {total_actions}\n"
+                f"**Active Warnings:** {active_warnings}",
             )
             embed.set_thumbnail(url=user.display_avatar.url)
             embed.set_footer(text=f"Page {page + 1}/{pages} • ID: {user.id}")

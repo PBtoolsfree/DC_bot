@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import contextlib
+
 import discord
 
 from bot.utils.logger import get_logger
@@ -24,7 +26,7 @@ class RollbackService:
         channel_type = getattr(before, "type", discord.ChannelType.text)
 
         try:
-            overwrites = getattr(before, "overwrites", {})
+            getattr(before, "overwrites", {})
             # Note: overwrites in audit log might be raw dicts.
             # In a production environment, we'd need to parse them carefully.
             # For this enterprise system, we will rely on basic recreation.
@@ -42,10 +44,8 @@ class RollbackService:
 
             # Repositioning
             if hasattr(before, "position"):
-                try:
+                with contextlib.suppress(discord.HTTPException):
                     await new_channel.edit(position=before.position)
-                except discord.HTTPException:
-                    pass
 
             return new_channel
 
@@ -78,10 +78,8 @@ class RollbackService:
 
             # We can't guarantee position restoration if it's too high for the bot, but we try
             if hasattr(before, "position"):
-                try:
+                with contextlib.suppress(discord.HTTPException):
                     await new_role.edit(position=before.position)
-                except discord.HTTPException:
-                    pass
 
             return new_role
 
@@ -110,12 +108,12 @@ class RollbackService:
             if role.managed or role.is_default():
                 continue
 
-            if any(getattr(role.permissions, perm, False) for perm in dangerous_perms):
-                if role < member.guild.me.top_role:
-                    roles_to_remove.append(role)
+            if (
+                any(getattr(role.permissions, perm, False) for perm in dangerous_perms)
+                and role < member.guild.me.top_role
+            ):
+                roles_to_remove.append(role)
 
         if roles_to_remove:
-            try:
+            with contextlib.suppress(discord.Forbidden, discord.HTTPException):
                 await member.remove_roles(*roles_to_remove, reason=reason)
-            except (discord.Forbidden, discord.HTTPException):
-                pass

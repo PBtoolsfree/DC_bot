@@ -1,5 +1,7 @@
 """Verification Cog."""
 
+import contextlib
+
 import discord
 from discord.ext import commands
 
@@ -29,10 +31,8 @@ class VerificationCog(commands.Cog):
             if settings.quarantine_role_id:
                 role = member.guild.get_role(settings.quarantine_role_id)
                 if role:
-                    try:
+                    with contextlib.suppress(discord.HTTPException):
                         await member.add_roles(role, reason="Quarantine on Join")
-                    except discord.HTTPException:
-                        pass
 
             # If auto-verify is configured instead of button, we can initiate it here
             # For Button, the user must click the button in the channel

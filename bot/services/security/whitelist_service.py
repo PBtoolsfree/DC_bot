@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
-import discord
+from typing import TYPE_CHECKING
 
-from bot.database.schemas.security import WhitelistConfig
+if TYPE_CHECKING:
+    import discord
+
+    from bot.database.schemas.security import WhitelistConfig
 
 
 class WhitelistService:
@@ -31,7 +34,4 @@ class WhitelistService:
 
         # Check role whitelist
         member_role_ids = {role.id for role in member.roles}
-        if any(role_id in whitelist.roles for role_id in member_role_ids):
-            return True
-
-        return False
+        return bool(any(role_id in whitelist.roles for role_id in member_role_ids))

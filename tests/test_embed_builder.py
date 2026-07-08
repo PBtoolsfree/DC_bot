@@ -111,7 +111,7 @@ class TestEmbedBuilderModeration:
     def test_moderation_embed_with_member_thumbnail(self) -> None:
         """Moderation embed should set thumbnail to target's avatar."""
         target = MagicMock(spec=discord.Member)
-        target.__str__ = lambda self: "TestUser"
+        target.__str__ = lambda _self: "TestUser"
         target.display_avatar = MagicMock()
         target.display_avatar.url = "https://cdn.discordapp.com/embed/avatars/0.png"
 

@@ -10,7 +10,7 @@ Provides:
 from __future__ import annotations
 
 import asyncio
-from collections.abc import AsyncGenerator
+from typing import TYPE_CHECKING
 from unittest.mock import AsyncMock, MagicMock
 
 import discord
@@ -24,6 +24,9 @@ from sqlalchemy.ext.asyncio import (
 )
 
 from bot.database.models.base import Base
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncGenerator
 
 # ======================================================================
 # Event Loop

@@ -5,9 +5,6 @@ from __future__ import annotations
 from datetime import timedelta
 from typing import TYPE_CHECKING
 
-import discord
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from bot.database.models.member import ModActionType, Warning
 from bot.database.repositories.guild_repo import GuildRepository
 from bot.database.repositories.member_repo import MemberRepository
@@ -15,6 +12,9 @@ from bot.services.logging_service import LoggingService
 from bot.utils.logger import get_logger
 
 if TYPE_CHECKING:
+    import discord
+    from sqlalchemy.ext.asyncio import AsyncSession
+
     from bot.core.bot import ManagementBot
     from bot.services.moderation_service import ModerationService
 
@@ -111,7 +111,7 @@ class PunishmentService:
             session, guild.id, "moderation"
         )
 
-        # Structure: {"warn_thresholds": {"3": {"action": "timeout", "duration": 3600}, "5": {"action": "kick"}}}
+        # Structure: {"warn_thresholds": {"3": {"action": "timeout", "duration": 3600}, "5": ...}}
         thresholds = settings.config.get("warn_thresholds", {})
         count_str = str(warning_count)
 
@@ -203,5 +203,4 @@ class PunishmentService:
         Returns:
             The number of warnings cleared.
         """
-        count = await MemberRepository.clear_warnings(session, guild.id, target.id, moderator.id)
-        return count
+        return await MemberRepository.clear_warnings(session, guild.id, target.id, moderator.id)

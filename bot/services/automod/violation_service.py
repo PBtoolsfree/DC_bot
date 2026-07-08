@@ -7,11 +7,11 @@ and executes the actions via ModerationService.
 
 from __future__ import annotations
 
+import contextlib
 from datetime import timedelta
 from typing import TYPE_CHECKING
 
 import discord
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.database.models.member import ModActionType
 from bot.database.repositories.member_repo import MemberRepository
@@ -20,6 +20,8 @@ from bot.services.moderation_service import ModerationService
 from bot.utils.logger import get_logger
 
 if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
+
     from bot.core.bot import ManagementBot
 
 logger = get_logger(__name__)
@@ -123,10 +125,8 @@ class ViolationService:
             try:
                 if action.type == AutoModAction.DELETE:
                     # Ignore if message is already deleted
-                    try:
+                    with contextlib.suppress(discord.NotFound):
                         await message.delete()
-                    except discord.NotFound:
-                        pass
 
                 elif action.type == AutoModAction.WARN:
                     # We log it manually to maintain context of 'is_automated'
@@ -144,10 +144,8 @@ class ViolationService:
                     )
 
                     if action.message:
-                        try:
+                        with contextlib.suppress(discord.Forbidden):
                             await target.send(f"⚠️ **Warning in {guild.name}**: {action.message}")
-                        except discord.Forbidden:
-                            pass
 
                 elif action.type == AutoModAction.TIMEOUT:
                     duration = timedelta(seconds=action.duration_seconds or 3600)
@@ -187,10 +185,8 @@ class ViolationService:
                         )
 
                 elif action.type == AutoModAction.DM_USER:
-                    try:
+                    with contextlib.suppress(discord.Forbidden):
                         await target.send(action.message or f"You violated a rule in {guild.name}.")
-                    except discord.Forbidden:
-                        pass
 
                 elif action.type == AutoModAction.NOTIFY_STAFF:
                     # This relies on the LoggingService to send a specialized alert

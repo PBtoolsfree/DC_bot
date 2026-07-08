@@ -38,16 +38,9 @@ ignore = [
     "S101",  # Allow assert in tests
     "S104",  # Allow binding to all interfaces
     "B008",  # Allow function calls in defaults (FastAPI Depends)
-    "E501",  # Line too long
-    "RUF059", # Unpacked variable args is never used
-    "TC002",  # Move third-party import into type-checking block
-    "TC003",  # Move standard library import into a type-checking block
-    "B904",   # raise ... from err
-    "SIM105", # Use contextlib.suppress
-    "S110",   # try-except-pass detected
-    "ARG005", # Unused lambda argument
-    "RET504", # Unnecessary assignment before return
-    "F841",   # Local variable is assigned to but never used
+    "TC001",
+    "TC003",
+    "ARG004",
 ]
 
 [tool.ruff.lint.isort]

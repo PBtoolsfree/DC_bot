@@ -2,11 +2,15 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from discord.ext import commands, tasks
 
-from bot.core.bot import ManagementBot
 from bot.services.logging.retention_service import RetentionService
 from bot.utils.logger import get_logger
+
+if TYPE_CHECKING:
+    from bot.core.bot import ManagementBot
 
 logger = get_logger(__name__)
 

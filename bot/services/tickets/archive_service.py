@@ -40,10 +40,10 @@ class ArchiveService:
         if ticket.channel_id:
             channel = guild.get_channel(ticket.channel_id)
             if channel:
-                try:
+                import contextlib
+
+                with contextlib.suppress(discord.HTTPException):
                     await channel.delete(reason="Ticket Archived")  # type: ignore
-                except discord.HTTPException:
-                    pass
             ticket.channel_id = None
 
         await session.flush()

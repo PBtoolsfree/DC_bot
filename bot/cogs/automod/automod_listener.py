@@ -8,7 +8,6 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import discord
 from discord.ext import commands
 
 from bot.services.automod.automod_service import AutoModerationService
@@ -16,6 +15,8 @@ from bot.services.redis_service import RedisService
 from bot.utils.logger import get_logger
 
 if TYPE_CHECKING:
+    import discord
+
     from bot.core.bot import ManagementBot
 
 logger = get_logger(__name__)
@@ -52,7 +53,7 @@ class AutoModListenerCog(commands.Cog):
         async with self.bot.db.session() as session:
             # We don't await the result if we just want it to drop
             # but we need to ensure the message wasn't flagged before executing command
-            allowed = await self.automod_service.process_message(session, message)
+            await self.automod_service.process_message(session, message)
 
             # If the message was deleted or blocked by automod, we should technically
             # stop processing commands for it (though discord.py processes commands separately).

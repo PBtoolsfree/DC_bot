@@ -17,12 +17,13 @@ from typing import TYPE_CHECKING
 import discord
 from discord.ext import commands
 
-from bot.config import BotSettings
 from bot.database.engine import DatabaseEngine
 from bot.utils.logger import get_logger
 
 if TYPE_CHECKING:
     from redis.asyncio import Redis
+
+    from bot.config import BotSettings
 
 logger = get_logger(__name__)
 
@@ -126,7 +127,7 @@ class ManagementBot(commands.Bot):
         )
         await self.change_presence(activity=activity, status=discord.Status.online)
 
-    async def on_error(self, event_method: str, *args: object, **kwargs: object) -> None:
+    async def on_error(self, event_method: str, *_args: object, **_kwargs: object) -> None:
         """Global error handler for event listeners.
 
         Logs the full traceback with structured context.

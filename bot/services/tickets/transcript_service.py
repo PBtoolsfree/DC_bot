@@ -1,6 +1,5 @@
 """Transcript Service."""
 
-import datetime
 from pathlib import Path
 
 from sqlalchemy import select
@@ -53,11 +52,16 @@ class TranscriptService:
 
         # 3. Save to disk (In production, this could be AWS S3 upload)
         # We'll mock it by saving to local disk
-        filename = f"ticket_{ticket.id}_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}{provider.extension}"
+        import datetime as dt
+
+        now_str = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%d%H%M%S")
+        filename = f"ticket_{ticket.id}_{now_str}{provider.extension}"
         filepath = self.export_dir / filename
 
-        with open(filepath, "wb") as f:
-            f.write(data)
+        import aiofiles
+
+        async with aiofiles.open(filepath, "wb") as f:
+            await f.write(data)
 
         # 4. Save metadata in DB
         transcript = TicketTranscript(

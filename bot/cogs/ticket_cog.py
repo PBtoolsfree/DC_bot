@@ -1,5 +1,7 @@
 """Ticket Cog."""
 
+import contextlib
+
 import discord
 from discord.ext import commands
 from sqlalchemy import select
@@ -80,12 +82,10 @@ class TicketCog(commands.Cog):
                     if target_user_id:
                         user = self.bot.get_user(target_user_id)
                         if user:
-                            try:
+                            with contextlib.suppress(discord.HTTPException):
                                 await user.send(
                                     f"**[Staff {message.author.name}]**: {message.content}"
                                 )
-                            except discord.HTTPException:
-                                pass
 
                 await session.commit()
 

@@ -71,7 +71,8 @@ class Ticket(Base):
         ForeignKey("ticket_categories.id", ondelete="CASCADE"), nullable=False
     )
 
-    # State Machine: "open", "claimed", "in_progress", "waiting_user", "waiting_staff", "resolved", "closed", "archived", "deleted"
+    # State Machine: "open", "claimed", "in_progress", "waiting_user", "waiting_staff", "resolved",
+    # "closed", "archived", "deleted"
     status: Mapped[str] = mapped_column(String(20), default="open", nullable=False)
 
     # Low, Medium, High, Urgent

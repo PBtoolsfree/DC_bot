@@ -6,6 +6,8 @@ All constants are typed and documented.
 
 from __future__ import annotations
 
+import typing
+
 import discord
 
 # ======================================================================
@@ -53,7 +55,7 @@ class Emojis:
     SUCCESS = "✅"
     ERROR = "❌"
     WARNING = "⚠️"
-    INFO = "ℹ️"
+    INFO = "💡"
     LOADING = "⏳"
     CLOCK = "🕐"
 
@@ -93,7 +95,18 @@ class Emojis:
     DOWNVOTE = "👎"
 
     # Numbers
-    NUMBERS = ["0️⃣", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣"]
+    NUMBERS: typing.ClassVar[list[str]] = [
+        "0️⃣",
+        "1️⃣",
+        "2️⃣",
+        "3️⃣",
+        "4️⃣",
+        "5️⃣",
+        "6️⃣",
+        "7️⃣",
+        "8️⃣",
+        "9️⃣",
+    ]
 
 
 # ======================================================================
@@ -162,7 +175,7 @@ class Modules:
     SUGGESTIONS = "suggestions"
     BACKUP = "backup"
 
-    ALL: list[str] = [
+    ALL: typing.ClassVar[list[str]] = [
         MODERATION,
         AUTOMOD,
         SECURITY,

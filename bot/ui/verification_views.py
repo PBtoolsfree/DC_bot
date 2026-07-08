@@ -125,7 +125,8 @@ class VerificationView(View):
             # But the challenge was already generated during initiate_verification.
             # To fetch the image again we'd need to cache the BytesIO or regenerate.
             # For this enterprise design, the provider returns the image in initiate_verification,
-            # so the orchestrator needs to pass it back. Let's assume we show the modal directly for Math/Word.
+            # so the orchestrator needs to pass it back.
+            # Let's assume we show the modal directly for Math/Word.
 
             # Since discord.ui.Modal can't easily hold an image attached in the prompt,
             # We first send the image to the user as an ephemeral message, THEN they click "Answer"
@@ -135,7 +136,7 @@ class VerificationView(View):
             # Create a button to open the modal
             class AnswerView(View):
                 @discord.ui.button(label="Answer", style=discord.ButtonStyle.primary)
-                async def ans(self, interaction: discord.Interaction, button: Button):
+                async def ans(self, interaction: discord.Interaction, _button: Button):
                     await interaction.response.send_modal(
                         VerificationModal(v_session.session_id, settings.language)
                     )

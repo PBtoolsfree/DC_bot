@@ -2,15 +2,20 @@
 
 from __future__ import annotations
 
-import discord
-from sqlalchemy.ext.asyncio import AsyncSession
+from typing import TYPE_CHECKING
 
-from bot.database.schemas.security import SecuritySettings
+import discord
+
 from bot.services.security.incident_service import IncidentService
-from bot.services.security.raid_detection_service import RaidDetectionService
 from bot.services.security.rollback_service import RollbackService
 from bot.services.security.whitelist_service import WhitelistService
 from bot.utils.logger import get_logger
+
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
+
+    from bot.database.schemas.security import SecuritySettings
+    from bot.services.security.raid_detection_service import RaidDetectionService
 
 logger = get_logger(__name__)
 
@@ -54,7 +59,8 @@ class SecurityService:
             return False
 
         # 3. Check Velocity / Raid Tracker
-        # For Anti-Nuke, we track by executor. For Anti-Raid (e.g. mass join), we track globally for the guild.
+        # For Anti-Nuke, we track by executor.
+        # For Anti-Raid (e.g. mass join), we track globally for the guild.
         tracker_target = executor.id if is_nuke else None
 
         exceeded = await self.raid_service.add_action_and_check(
@@ -86,7 +92,7 @@ class SecurityService:
             return True
 
         # Apply Punishment
-        punishment_success = await self._apply_punishment(executor, rule.action, action_type)
+        await self._apply_punishment(executor, rule.action, action_type)
 
         # Queue Rollback if applicable
         rollback_status = "NONE"

@@ -1,6 +1,8 @@
 """Verification Service Orchestrator."""
 
+import contextlib
 import datetime
+from typing import TYPE_CHECKING
 
 import discord
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -13,12 +15,14 @@ from bot.database.models.verification import (
 
 # Assume we have a StreamingService to broadcast events (Module 5)
 from bot.services.logging.streaming_service import StreamingService
-from bot.services.verification.providers.base import CaptchaProvider
 from bot.services.verification.providers.image_provider import ImageCaptchaProvider
 from bot.services.verification.providers.math_provider import MathCaptchaProvider
 from bot.services.verification.providers.word_provider import WordCaptchaProvider
 from bot.services.verification.risk_engine import RiskEngineService
 from bot.services.verification.session_service import SessionService
+
+if TYPE_CHECKING:
+    from bot.services.verification.providers.base import CaptchaProvider
 
 
 class VerificationService:
@@ -42,10 +46,8 @@ class VerificationService:
         if settings.quarantine_role_id:
             role = member.guild.get_role(settings.quarantine_role_id)
             if role:
-                try:
+                with contextlib.suppress(discord.HTTPException):
                     await member.add_roles(role, reason="Verification Quarantine")
-                except discord.HTTPException:
-                    pass
 
         # 2. Calculate Risk
         risk_score = await RiskEngineService.calculate_risk(member)
@@ -60,11 +62,9 @@ class VerificationService:
 
         # 4. Generate Challenge if provider exists
         expected_answer = None
-        challenge_data = None
         if v_type in self.providers:
             challenge = await self.providers[v_type].generate_challenge(member.id)
             expected_answer = challenge.expected_answer
-            challenge_data = challenge
 
         # 5. Create Database Session
         v_session = await SessionService.create_session(
@@ -168,16 +168,12 @@ class VerificationService:
                 roles_to_add.append(r)
 
         if roles_to_remove:
-            try:
+            with contextlib.suppress(discord.HTTPException):
                 await member.remove_roles(*roles_to_remove, reason="Verification Passed")
-            except discord.HTTPException:
-                pass
 
         if roles_to_add:
-            try:
+            with contextlib.suppress(discord.HTTPException):
                 await member.add_roles(*roles_to_add, reason="Verification Passed")
-            except discord.HTTPException:
-                pass
 
     async def _log_history(
         self, session: AsyncSession, v_session: VerificationSession, result: str

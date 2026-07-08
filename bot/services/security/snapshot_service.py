@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import discord
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.database.repositories.security_repo import SecurityRepository
+
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class SnapshotService:

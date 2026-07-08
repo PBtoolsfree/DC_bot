@@ -63,7 +63,7 @@ async def add_member(
     try:
         user_id_int = int(discord_user_id)
     except ValueError:
-        raise HTTPException(status_code=400, detail="Invalid discord_user_id")
+        raise HTTPException(status_code=400, detail="Invalid discord_user_id") from None
 
     # Check if exists
     existing = await RBACService.get_member_role(session, guild_id, user_id_int)

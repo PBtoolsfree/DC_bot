@@ -40,7 +40,7 @@ class TicketControlView(View):
                 await interaction.followup.send("Ticket already claimed or error.")
 
     @discord.ui.button(label="Close", style=discord.ButtonStyle.danger, custom_id="ticket_close")
-    async def close_btn(self, interaction: discord.Interaction, button: Button):
+    async def close_btn(self, interaction: discord.Interaction, _button: Button):
         await interaction.response.defer()
         async with db.session() as session:
             ticket = await TicketRepository.get_ticket_by_id(session, self.ticket_id)
@@ -48,7 +48,9 @@ class TicketControlView(View):
                 return
 
             # Change status to closed, then archive immediately for this demo
-            await ArchiveService.archive_ticket(session, interaction.guild, ticket, interaction.user.id)  # type: ignore
+            await ArchiveService.archive_ticket(
+                session, interaction.guild, ticket, interaction.user.id
+            )  # type: ignore
             await session.commit()
 
 
@@ -82,7 +84,9 @@ class TicketPanelView(View):
                 return
 
             # Open ticket
-            ticket = await TicketService.open_ticket(session, interaction.guild, interaction.user, category)  # type: ignore
+            ticket = await TicketService.open_ticket(
+                session, interaction.guild, interaction.user, category
+            )  # type: ignore
             await session.commit()
 
             if ticket.channel_id:

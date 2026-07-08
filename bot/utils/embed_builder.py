@@ -141,7 +141,7 @@ class EmbedBuilder:
         """Create an info embed (blurple).
 
         Args:
-            title: Embed title (auto-prefixed with ℹ️).
+            title: Embed title (auto-prefixed).
             description: Embed description.
 
         Returns:

@@ -19,8 +19,7 @@ class PillowImageProvider(ImageProvider):
                     data = await resp.read()
                     return Image.open(io.BytesIO(data)).convert("RGBA")
         except Exception:
-            pass
-        return None
+            return None
 
     async def generate_welcome_card(
         self, member: discord.Member, background_url: str | None = None

@@ -1,7 +1,5 @@
 """Math CAPTCHA provider."""
 
-import random
-
 from bot.services.verification.providers.base import CaptchaChallenge, CaptchaProvider
 
 
@@ -12,18 +10,22 @@ class MathCaptchaProvider(CaptchaProvider):
     def provider_id(self) -> str:
         return "math"
 
-    async def generate_challenge(self, user_id: int) -> CaptchaChallenge:
+    async def generate_challenge(self, _user_id: int) -> CaptchaChallenge:
         """Generate a random addition/subtraction problem."""
         operations = ["+", "-", "*"]
-        op = random.choice(operations)
+        import secrets
+
+        op = secrets.choice(operations)
 
         if op == "*":
-            a = random.randint(2, 9)
-            b = random.randint(2, 9)
+            a = secrets.randbelow(8) + 2
+            b = secrets.randbelow(8) + 2
             expected = a * b
         else:
-            a = random.randint(10, 50)
-            b = random.randint(1, 20)
+            import secrets
+
+            a = secrets.randbelow(41) + 10
+            b = secrets.randbelow(20) + 1
             if op == "-":
                 # Ensure positive result
                 if b > a:

@@ -5,13 +5,14 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import discord
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.database.repositories.guild_repo import GuildRepository
 from bot.utils.embed_builder import EmbedBuilder
 from bot.utils.logger import get_logger
 
 if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
+
     from bot.core.bot import ManagementBot
     from bot.database.models.member import ModAction
 

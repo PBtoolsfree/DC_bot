@@ -28,7 +28,7 @@ class ReactionRoleView(View):
         async def button_callback(interaction: discord.Interaction):
             await interaction.response.defer(ephemeral=True)
             async with db.session() as session:
-                success, msg = await ReactionRoleService.toggle_role(
+                _success, msg = await ReactionRoleService.toggle_role(
                     session, interaction.user, self.group_id, role_id  # type: ignore
                 )
                 await session.commit()

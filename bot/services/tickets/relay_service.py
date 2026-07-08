@@ -11,7 +11,9 @@ class RelayService:
     # In production, this would be a Redis client. We use a mock dict here for the skeleton.
     # The dictionary maps user_id -> ticket_channel_id and ticket_channel_id -> user_id
     # so we can route messages in both directions.
-    _redis_cache: dict[str, int] = {}
+    import typing
+
+    _redis_cache: typing.ClassVar[dict[str, int]] = {}
 
     @classmethod
     async def establish_relay(cls, user_id: int, ticket_channel_id: int) -> None:

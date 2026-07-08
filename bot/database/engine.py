@@ -19,7 +19,6 @@ Usage:
 
 from __future__ import annotations
 
-from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from typing import TYPE_CHECKING
 
@@ -33,6 +32,8 @@ from sqlalchemy.ext.asyncio import (
 from bot.utils.logger import get_logger
 
 if TYPE_CHECKING:
+    from collections.abc import AsyncGenerator
+
     from bot.config import BotSettings
 
 logger = get_logger(__name__)

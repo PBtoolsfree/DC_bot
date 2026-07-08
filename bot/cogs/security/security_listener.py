@@ -2,15 +2,19 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import discord
 from discord.ext import commands
 
-from bot.core.bot import ManagementBot
 from bot.database.repositories.guild_repo import GuildRepository
 from bot.database.schemas.security import SecuritySettings
 from bot.services.security.audit_service import AuditService
 from bot.services.security.security_service import SecurityService
 from bot.utils.logger import get_logger
+
+if TYPE_CHECKING:
+    from bot.core.bot import ManagementBot
 
 logger = get_logger(__name__)
 
@@ -79,7 +83,7 @@ class SecurityListenerCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_channel_update(
-        self, before: discord.abc.GuildChannel, after: discord.abc.GuildChannel
+        self, _before: discord.abc.GuildChannel, after: discord.abc.GuildChannel
     ) -> None:
         """Handle channel update events."""
         await self._handle_security_event(
@@ -101,7 +105,7 @@ class SecurityListenerCog(commands.Cog):
         )
 
     @commands.Cog.listener()
-    async def on_guild_role_update(self, before: discord.Role, after: discord.Role) -> None:
+    async def on_guild_role_update(self, _before: discord.Role, after: discord.Role) -> None:
         """Handle role update events."""
         await self._handle_security_event(
             after.guild, "role_update", discord.AuditLogAction.role_update, after.id
@@ -138,5 +142,6 @@ class SecurityListenerCog(commands.Cog):
 
             if exceeded:
                 # Trigger raid lockdown
-                # For raid defense, punishment usually means banning the recently joined members or enabling verification
+                # For raid defense, punishment usually means banning the recently joined members
+                # or enabling verification
                 pass  # Implementation specific to Raid protocol

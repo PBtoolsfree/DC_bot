@@ -4,16 +4,19 @@ from __future__ import annotations
 
 import re
 import uuid
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import discord
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from bot.database.models.logging import ActionLog
 from bot.database.repositories.log_repo import LogRepository
-from bot.database.schemas.logging import LoggingSettings
 from bot.services.logging.streaming_service import StreamingService
 from bot.utils.logger import get_logger
+
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
+
+    from bot.database.models.logging import ActionLog
+    from bot.database.schemas.logging import LoggingSettings
 
 logger = get_logger(__name__)
 
@@ -63,16 +66,15 @@ class LoggingService:
 
         # Determine if any configured channel is listening for this event
         target_channels = []
-        for channel_name, config in settings.channels.items():
+        for _channel_name, config in settings.channels.items():
             if config.enabled and action_type in config.events and config.channel_id:
                 target_channels.append(config.channel_id)
 
-        if not target_channels and not is_immutable:
+        if not target_channels and not is_immutable and severity < 3:
             # If no channel is listening and it's not a forced immutable log, we might skip
             # to save DB space, but enterprise systems log everything.
             # However, for performance we'll only log if it's routed or if severity is high.
-            if severity < 3:
-                return None
+            return None
 
         # Mask sensitive data in before/after if they are string-based
         # (This is a simplified masking pass. In production, we'd recursively search the dict)
@@ -110,10 +112,10 @@ class LoggingService:
             for dest_channel_id in target_channels:
                 dest_channel = guild.get_channel(dest_channel_id)
                 if isinstance(dest_channel, discord.TextChannel):
-                    try:
+                    import contextlib
+
+                    with contextlib.suppress(discord.HTTPException):
                         await dest_channel.send(embed=embed)
-                    except discord.HTTPException:
-                        pass  # Permissions issue or channel deleted
 
         # 3. Live Dashboard WebSocket Stream
         self.streaming_service.broadcast_event(

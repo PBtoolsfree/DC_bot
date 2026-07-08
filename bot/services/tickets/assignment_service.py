@@ -12,7 +12,7 @@ class AssignmentService:
 
     @staticmethod
     async def assign_least_loaded(
-        session: AsyncSession, guild: discord.Guild, ticket: Ticket, category: TicketCategory
+        session: AsyncSession, guild: discord.Guild, _ticket: Ticket, category: TicketCategory
     ) -> int | None:
         """Assign the ticket to the staff member with the fewest open tickets."""
 

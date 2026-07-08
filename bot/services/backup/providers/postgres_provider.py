@@ -13,8 +13,9 @@ class PostgresStorageProvider(BackupStorageProvider):
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def save_backup(self, backup_id: int, payload: dict) -> str:
-        """The payload is already stored in the ServerBackup.payload column. We just return a pg URI."""
+    async def save_backup(self, backup_id: int, _payload: dict) -> str:
+        """The payload is already stored in the ServerBackup.payload column.
+        We just return a pg URI."""
         return f"pg://server_backups/{backup_id}"
 
     async def load_backup(self, identifier: str) -> dict:

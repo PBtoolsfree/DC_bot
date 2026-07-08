@@ -21,7 +21,7 @@ class ApprovalService:
 
     @staticmethod
     async def approve_user(
-        session: AsyncSession, token: str, moderator_id: int
+        session: AsyncSession, token: str, _moderator_id: int
     ) -> VerificationSession | None:
         """Approve a user that was pending manual review."""
         # Find session
@@ -40,7 +40,7 @@ class ApprovalService:
 
     @staticmethod
     async def reject_user(
-        session: AsyncSession, token: str, moderator_id: int
+        session: AsyncSession, token: str, _moderator_id: int
     ) -> VerificationSession | None:
         """Reject a user that was pending manual review."""
         from sqlalchemy import select

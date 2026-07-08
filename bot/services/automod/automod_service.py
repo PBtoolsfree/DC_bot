@@ -8,20 +8,20 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-import discord
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from bot.database.repositories.guild_repo import GuildRepository
 from bot.database.schemas.automod import AutoModSettings
 from bot.services.automod.link_service import LinkService
 from bot.services.automod.profanity_service import ProfanityService
 from bot.services.automod.spam_service import SpamService
 from bot.services.automod.violation_service import ViolationService
-from bot.services.redis_service import RedisService
 from bot.utils.logger import get_logger
 
 if TYPE_CHECKING:
+    import discord
+    from sqlalchemy.ext.asyncio import AsyncSession
+
     from bot.core.bot import ManagementBot
+    from bot.services.redis_service import RedisService
 
 logger = get_logger(__name__)
 

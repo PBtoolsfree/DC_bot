@@ -62,7 +62,9 @@ class TestAutoModConfigCog:
 
         from discord import app_commands
 
-        await cog.toggle.callback.__wrapped__(cog, mock_interaction, app_commands.Choice(name="Enable", value="enable"))  # type: ignore
+        await cog.toggle.callback.__wrapped__(
+            cog, mock_interaction, app_commands.Choice(name="Enable", value="enable")
+        )
 
         GuildRepository.update_module_settings.assert_awaited_once_with(
             cog.bot.db.session.return_value.__aenter__.return_value,

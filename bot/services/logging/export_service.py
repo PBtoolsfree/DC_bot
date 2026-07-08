@@ -5,10 +5,12 @@ from __future__ import annotations
 import csv
 import io
 import json
-from collections.abc import Sequence
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-from bot.database.models.logging import ActionLog
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from bot.database.models.logging import ActionLog
 
 
 class ExportService:
@@ -95,8 +97,10 @@ class ExportService:
         html = [
             "<!DOCTYPE html>",
             "<html><head><title>Audit Logs</title>",
-            "<style>body { font-family: sans-serif; } table { border-collapse: collapse; width: 100%; }",
-            "th, td { border: 1px solid #ddd; padding: 8px; } th { background-color: #f2f2f2; }</style>",
+            "<style>body { font-family: sans-serif; } "
+            "table { border-collapse: collapse; width: 100%; }",
+            "th, td { border: 1px solid #ddd; padding: 8px; } "
+            "th { background-color: #f2f2f2; }</style>",
             "</head><body>",
             "<h2>Server Audit Logs</h2>",
             "<table><tr><th>Time</th><th>Action</th><th>Executor</th><th>Target</th><th>Details</th></tr>",

@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import time
+from typing import TYPE_CHECKING
 
-from bot.database.schemas.security import AntiNukeRule, AntiRaidRule
-from bot.services.redis_service import RedisService
+if TYPE_CHECKING:
+    from bot.database.schemas.security import AntiNukeRule, AntiRaidRule
+    from bot.services.redis_service import RedisService
 
 
 class RaidDetectionService:
@@ -50,9 +52,9 @@ class RaidDetectionService:
         await self.redis.zremrangebyscore(key, 0, window_start)
 
         # Add new action with timestamp as both score and value (or unique ID)
-        # Using a slight microsecond offset or just current_time if we don't care about exact uniqueness
+        # Using a slight microsecond offset or just current_time
         # Actually, ZADD needs unique members. We can use `<timestamp>:<increment>`
-        # For simplicity in this implementation, we will use an incrementing counter or random string.
+        # For simplicity we will use an incrementing counter or random string.
         import uuid
 
         member_val = f"{current_time}:{uuid.uuid4().hex[:8]}"

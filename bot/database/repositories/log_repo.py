@@ -3,13 +3,16 @@
 from __future__ import annotations
 
 import datetime
-from collections.abc import Sequence
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from sqlalchemy import delete, desc, or_, select
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.database.models.logging import ActionLog
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from sqlalchemy.ext.asyncio import AsyncSession
 
 
 class LogRepository:
@@ -92,7 +95,7 @@ class LogRepository:
         )
 
         stmt = delete(ActionLog).where(
-            ActionLog.created_at < cutoff_date, ActionLog.is_immutable == False
+            ActionLog.created_at < cutoff_date, not ActionLog.is_immutable
         )
 
         result = await session.execute(stmt)

@@ -28,7 +28,8 @@ class AutoRoleService:
             if config.target == "bot" and not member.bot:
                 continue
 
-            # Verification dependency is handled in Module 7 hooks (if verified -> apply delayed autorole)
+            # Verification dependency is handled in Module 7 hooks
+            # (if verified -> apply delayed autorole)
             if config.requires_verification:
                 continue  # Skip for now, Mod 7 will trigger us later
 

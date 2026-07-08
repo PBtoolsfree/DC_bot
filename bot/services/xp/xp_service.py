@@ -1,5 +1,7 @@
 """XP Service."""
 
+import contextlib
+
 import discord
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -82,7 +84,5 @@ class XPService:
                     roles_to_add.append(r)
 
             if roles_to_add:
-                try:
+                with contextlib.suppress(discord.HTTPException):
                     await member.add_roles(*roles_to_add, reason=f"Level {new_level} Reward")
-                except discord.HTTPException:
-                    pass

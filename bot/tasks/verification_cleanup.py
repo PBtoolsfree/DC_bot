@@ -1,5 +1,6 @@
 """Background task to clean up expired verification sessions."""
 
+import contextlib
 import datetime
 
 from discord.ext import commands, tasks
@@ -51,10 +52,8 @@ class VerificationCleanupTask(commands.Cog):
                     if settings and settings.kick_on_timeout:
                         member = guild.get_member(v_session.user_id)
                         if member:
-                            try:
+                            with contextlib.suppress(Exception):
                                 await member.kick(reason="Verification Timeout")
-                            except Exception:
-                                pass
 
                     v_session.state = "timeout"
 

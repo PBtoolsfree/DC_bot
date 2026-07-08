@@ -7,12 +7,14 @@ invisible characters, and Unicode abuse.
 from __future__ import annotations
 
 import re
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import discord
 
-from bot.database.schemas.automod import AutoModSettings, RuleConfig
 from bot.utils.logger import get_logger
+
+if TYPE_CHECKING:
+    from bot.database.schemas.automod import AutoModSettings, RuleConfig
 
 logger = get_logger(__name__)
 
@@ -52,8 +54,7 @@ class ProfanityService:
         for leet, normal in cls.LEET_MAP.items():
             text = text.replace(leet, normal)
         # 3. Strip whitespace and punctuation
-        text = re.sub(r"[\W_]+", "", text)
-        return text
+        return re.sub(r"[\W_]+", "", text)
 
     @classmethod
     def _check_ignored(cls, message: discord.Message, rule: RuleConfig) -> bool:
@@ -85,16 +86,20 @@ class ProfanityService:
             return None
 
         # 1. Zalgo Check
-        if settings.abuse_zalgo.enabled and not self._check_ignored(message, settings.abuse_zalgo):
-            if len(self.ZALGO_REGEX.findall(content)) > (settings.abuse_zalgo.threshold or 5):
-                return "abuse_zalgo"
+        if (
+            settings.abuse_zalgo.enabled
+            and not self._check_ignored(message, settings.abuse_zalgo)
+            and len(self.ZALGO_REGEX.findall(content)) > (settings.abuse_zalgo.threshold or 5)
+        ):
+            return "abuse_zalgo"
 
         # 2. Invisible Character Check
-        if settings.abuse_invisible.enabled and not self._check_ignored(
-            message, settings.abuse_invisible
+        if (
+            settings.abuse_invisible.enabled
+            and not self._check_ignored(message, settings.abuse_invisible)
+            and self.INVISIBLE_REGEX.search(content)
         ):
-            if self.INVISIBLE_REGEX.search(content):
-                return "abuse_invisible"
+            return "abuse_invisible"
 
         # 3. Unicode Abuse (Non-ASCII characters beyond a threshold)
         if settings.abuse_unicode.enabled and not self._check_ignored(
