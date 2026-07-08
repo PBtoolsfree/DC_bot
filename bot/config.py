@@ -149,7 +149,7 @@ class BotSettings(BaseSettings):
     )
 
     # --- Environment ---
-    environment: Literal["development", "staging", "production"] = Field(
+    environment: Literal["development", "testing", "staging", "production"] = Field(
         default="development",
         description="Deployment environment.",
     )

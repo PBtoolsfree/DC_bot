@@ -15,9 +15,7 @@ class RestoreService:
     """Handles parsing JSON backups and applying them to Discord."""
 
     @staticmethod
-    async def get_diff(
-        session: AsyncSession, _guild: discord.Guild, backup_id: int
-    ) -> dict:
+    async def get_diff(session: AsyncSession, _guild: discord.Guild, backup_id: int) -> dict:
         """Calculates what will be created/deleted/modified."""
         provider = PostgresStorageProvider(session)
         payload = await provider.load_backup(f"pg://server_backups/{backup_id}")
