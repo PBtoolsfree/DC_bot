@@ -119,7 +119,7 @@ apt-get install -y -qq \
     python3 python3-venv python3-pip python3-dev \
     libffi-dev libssl-dev libpq-dev \
     libjpeg-dev libpng-dev zlib1g-dev \
-    libpango-1.0-0 libpangocairo-1.0-0 libcairo2 libgdk-pixbuf2.0-0 \
+    libpango-1.0-0 libpangocairo-1.0-0 libcairo2 libgdk-pixbuf-2.0-0 \
     ffmpeg fonts-liberation fonts-dejavu-core \
     ufw fail2ban logrotate chrony \
     postgresql postgresql-contrib \

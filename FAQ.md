@@ -10,7 +10,7 @@ Ensure your `OAUTH2_REDIRECT_URI` exactly matches the one configured in the Disc
 The bot automatically grants full Dashboard access to the user IDs listed in the `BOT_OWNER_IDS` environment variable. Ensure your Discord ID is in that comma-separated list. Otherwise, you must have the `Administrator` permission natively inside the Discord server to manage its settings on the dashboard.
 
 ## 4. Why aren't images rendering in PDF Transcripts?
-PDF Generation relies on WeasyPrint and system libraries like Pango and Cairo. If you installed manually, ensure you ran `apt install libpango-1.0-0 libpangocairo-1.0-0 libcairo2 libgdk-pixbuf2.0-0`. Docker installations include these automatically.
+PDF Generation relies on WeasyPrint and system libraries like Pango and Cairo. If you installed manually, ensure you ran `apt install libpango-1.0-0 libpangocairo-1.0-0 libcairo2 libgdk-pixbuf-2.0-0`. Docker installations include these automatically.
 
 ## 5. Can I run this on a Raspberry Pi?
 Yes, but you will need to build the Docker images manually or install dependencies locally. Ensure you have at least 2GB of RAM or configure a large swap file, as the Next.js frontend build process is memory-intensive.

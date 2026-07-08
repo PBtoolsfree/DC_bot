@@ -41,7 +41,7 @@ If you want to set up everything manually:
 1.  **System Dependencies:**
     ```bash
     sudo apt update
-    sudo apt install python3.10 python3-venv postgresql redis-server nginx certbot python3-certbot-nginx libpango-1.0-0 libpangocairo-1.0-0 libcairo2 libgdk-pixbuf2.0-0
+    sudo apt install python3.10 python3-venv postgresql redis-server nginx certbot python3-certbot-nginx libpango-1.0-0 libpangocairo-1.0-0 libcairo2 libgdk-pixbuf-2.0-0
     ```
 
 2.  **Database Setup:**
