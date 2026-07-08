@@ -15,7 +15,6 @@ from bot.utils.time_parser import (
     parse_duration_seconds,
 )
 
-
 # ======================================================================
 # parse_duration tests
 # ======================================================================
@@ -60,9 +59,7 @@ class TestParseDuration:
         assert parse_duration("2h30m") == timedelta(hours=2, minutes=30)
         assert parse_duration("1d12h") == timedelta(days=1, hours=12)
         assert parse_duration("1w2d3h") == timedelta(weeks=1, days=2, hours=3)
-        assert parse_duration("1d2h30m45s") == timedelta(
-            days=1, hours=2, minutes=30, seconds=45
-        )
+        assert parse_duration("1d2h30m45s") == timedelta(days=1, hours=2, minutes=30, seconds=45)
 
     def test_parse_with_spaces(self) -> None:
         """Parse durations with spaces between units."""

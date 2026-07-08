@@ -4,9 +4,9 @@ import pytest
 from pydantic import ValidationError
 
 from bot.database.schemas.logging import (
+    ExportConfig,
     LogChannelConfig,
     LoggingSettings,
-    ExportConfig,
 )
 
 
@@ -25,7 +25,7 @@ def test_log_channel_config_validation() -> None:
 
     # Test invalid event
     with pytest.raises(ValidationError):
-        LogChannelConfig(events=["invalid_event"]) # type: ignore
+        LogChannelConfig(events=["invalid_event"])  # type: ignore
 
 
 def test_logging_settings_defaults() -> None:
@@ -46,11 +46,11 @@ def test_logging_settings_from_dict() -> None:
             "messages": {
                 "enabled": True,
                 "channel_id": 999,
-                "events": ["message_delete", "message_edit"]
+                "events": ["message_delete", "message_edit"],
             }
-        }
+        },
     }
-    
+
     settings = LoggingSettings.from_dict(data)
     assert settings.enabled is True
     assert settings.retention_days == 60

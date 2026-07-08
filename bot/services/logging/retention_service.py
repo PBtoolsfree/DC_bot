@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import asyncio
-
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.database.repositories.log_repo import LogRepository
@@ -18,7 +16,7 @@ class RetentionService:
     @staticmethod
     async def cleanup_expired_logs(session: AsyncSession, retention_days: int) -> int:
         """Purge logs older than the retention period.
-        
+
         Returns the number of logs purged.
         """
         try:

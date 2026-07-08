@@ -13,14 +13,9 @@ Usage:
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 import discord
 
 from bot.utils.constants import Emojis
-
-if TYPE_CHECKING:
-    pass
 
 
 class PaginatorView(discord.ui.View):

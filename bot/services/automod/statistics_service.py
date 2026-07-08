@@ -6,8 +6,6 @@ Provides data for the future Dashboard integration.
 
 from __future__ import annotations
 
-from typing import Any
-
 from bot.services.redis_service import RedisService
 from bot.utils.logger import get_logger
 
@@ -24,7 +22,7 @@ class StatisticsService:
         """Fetch real-time automod violation statistics for a guild."""
         # This will be fully implemented when the Dashboard API is built (Module 8).
         # For now, it provides a structure to read the Redis counters.
-        
+
         # We would scan for `stats:automod:violations:{guild_id}:*`
         # Since scanning is expensive, we rely on a known set of keys or a Redis Hash
         # For Module 3, this serves as a placeholder for the required architecture.
@@ -34,4 +32,3 @@ class StatisticsService:
         """Background task to aggregate daily redis counters into the database."""
         # This would run nightly to move stats from Redis to PostgreSQL
         # We will implement the DB models for this in the Analytics Module (Module 7)
-        pass

@@ -7,7 +7,6 @@ invisible characters, and Unicode abuse.
 from __future__ import annotations
 
 import re
-import unicodedata
 from typing import ClassVar
 
 import discord
@@ -65,17 +64,19 @@ class ProfanityService:
             return True
         if getattr(message.channel, "category_id", None) in rule.ignored_categories:
             return True
-            
+
         if isinstance(message.author, discord.Member):
             author_roles = {role.id for role in message.author.roles}
             if any(role_id in rule.ignored_roles for role_id in author_roles):
                 return True
-                
+
         return False
 
-    async def check_message(self, message: discord.Message, settings: AutoModSettings) -> str | None:
+    async def check_message(
+        self, message: discord.Message, settings: AutoModSettings
+    ) -> str | None:
         """Evaluate a message against all content filtering rules.
-        
+
         Returns the name of the triggered rule (e.g., "words_profanity", "abuse_zalgo"),
         or None if no rules were violated.
         """
@@ -89,15 +90,19 @@ class ProfanityService:
                 return "abuse_zalgo"
 
         # 2. Invisible Character Check
-        if settings.abuse_invisible.enabled and not self._check_ignored(message, settings.abuse_invisible):
+        if settings.abuse_invisible.enabled and not self._check_ignored(
+            message, settings.abuse_invisible
+        ):
             if self.INVISIBLE_REGEX.search(content):
                 return "abuse_invisible"
 
         # 3. Unicode Abuse (Non-ASCII characters beyond a threshold)
-        if settings.abuse_unicode.enabled and not self._check_ignored(message, settings.abuse_unicode):
+        if settings.abuse_unicode.enabled and not self._check_ignored(
+            message, settings.abuse_unicode
+        ):
             ascii_count = sum(1 for char in content if ord(char) < 128)
             ratio = ascii_count / len(content) if content else 1
-            if ratio < (settings.abuse_unicode.threshold or 50) / 100.0: # threshold is percentage
+            if ratio < (settings.abuse_unicode.threshold or 50) / 100.0:  # threshold is percentage
                 return "abuse_unicode"
 
         # 4. Regex Filter
@@ -111,15 +116,19 @@ class ProfanityService:
 
         # 5. Profanity & Custom Words
         normalized_content = self._normalize_text(content)
-        
-        if settings.words_profanity.enabled and not self._check_ignored(message, settings.words_profanity):
+
+        if settings.words_profanity.enabled and not self._check_ignored(
+            message, settings.words_profanity
+        ):
             # Check whitelist first
             if any(word in normalized_content for word in settings.words_profanity.whitelist):
                 pass
             elif any(word in normalized_content for word in settings.words_profanity.blacklist):
                 return "words_profanity"
 
-        if settings.words_custom.enabled and not self._check_ignored(message, settings.words_custom):
+        if settings.words_custom.enabled and not self._check_ignored(
+            message, settings.words_custom
+        ):
             if any(word in normalized_content for word in settings.words_custom.whitelist):
                 pass
             elif any(word in normalized_content for word in settings.words_custom.blacklist):

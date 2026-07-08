@@ -2,15 +2,11 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
 import asyncio
 
 import discord
 
 from bot.utils.logger import get_logger
-
-if TYPE_CHECKING:
-    pass
 
 logger = get_logger(__name__)
 
@@ -43,7 +39,7 @@ class AuditService:
             async for entry in guild.audit_logs(action=action, limit=limit):
                 if target_id and getattr(entry.target, "id", None) != target_id:
                     continue
-                    
+
                 # Ensure the log is recent
                 time_diff = (now - entry.created_at).total_seconds()
                 if time_diff > time_window_seconds:
@@ -59,7 +55,7 @@ class AuditService:
             logger.warning("audit_service.forbidden", guild_id=guild.id)
         except discord.HTTPException as e:
             logger.error("audit_service.http_error", error=str(e), guild_id=guild.id)
-            
+
         return None
 
     async def clear_cache(self) -> None:

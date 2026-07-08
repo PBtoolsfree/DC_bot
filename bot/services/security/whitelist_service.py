@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import discord
+
 from bot.database.schemas.security import WhitelistConfig
 
 
@@ -11,9 +12,7 @@ class WhitelistService:
 
     @staticmethod
     def is_exempt(
-        member: discord.Member, 
-        whitelist: WhitelistConfig,
-        bot_owner_ids: set[int] | None = None
+        member: discord.Member, whitelist: WhitelistConfig, bot_owner_ids: set[int] | None = None
     ) -> bool:
         """Check if a member is fully exempt from security checks."""
         # Bot owners and server owner always exempt

@@ -5,8 +5,8 @@ from __future__ import annotations
 import discord
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from bot.database.repositories.security_repo import SecurityRepository
 from bot.database.models.security import IncidentReport
+from bot.database.repositories.security_repo import SecurityRepository
 from bot.utils.embed_builder import EmbedBuilder
 
 
@@ -35,9 +35,9 @@ class IncidentService:
             target_id=target_id,
             reason=reason,
             rollback_status=rollback_status,
-            metadata_json=metadata
+            metadata_json=metadata,
         )
-        
+
         # 2. Discord Log Channel
         if log_channel_id:
             channel = guild.get_channel(log_channel_id)
@@ -50,10 +50,10 @@ class IncidentService:
                     embed.add_field(name="Executor ID", value=str(executor_id), inline=True)
                 if target_id:
                     embed.add_field(name="Target ID", value=str(target_id), inline=True)
-                    
+
                 embed.add_field(name="Rollback Status", value=rollback_status, inline=True)
                 embed.set_footer(text=f"Incident ID: {incident.id}")
-                
+
                 try:
                     await channel.send(embed=embed)
                 except discord.HTTPException:

@@ -1,11 +1,13 @@
 """Pydantic schemas for the Ticket Dashboard API."""
 
-from pydantic import BaseModel, Field
 from datetime import datetime
+
+from pydantic import BaseModel, Field
 
 
 class TicketCategorySchema(BaseModel):
     """Schema for a Ticket Category."""
+
     id: int | None = None
     name: str = Field(..., max_length=50)
     description: str | None = Field(None, max_length=200)
@@ -17,6 +19,7 @@ class TicketCategorySchema(BaseModel):
 
 class TicketPanelSchema(BaseModel):
     """Schema for a Ticket Panel."""
+
     id: int | None = None
     channel_id: str
     message_id: str | None = None
@@ -27,6 +30,7 @@ class TicketPanelSchema(BaseModel):
 
 class TicketResponse(BaseModel):
     """Schema for a Ticket shown on the dashboard."""
+
     id: int
     guild_id: str
     channel_id: str | None

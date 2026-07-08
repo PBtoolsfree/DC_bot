@@ -4,13 +4,12 @@ from __future__ import annotations
 
 import discord
 from discord.ext import commands
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.core.bot import ManagementBot
 from bot.database.repositories.guild_repo import GuildRepository
 from bot.database.schemas.security import SecuritySettings
-from bot.services.security.security_service import SecurityService
 from bot.services.security.audit_service import AuditService
+from bot.services.security.security_service import SecurityService
 from bot.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -41,18 +40,15 @@ class SecurityListenerCog(commands.Cog):
                 return
 
             settings = SecuritySettings.from_dict(settings_db.config)
-            
+
             # Fetch the audit log entry to identify the executor
             audit_entry = await self.audit_service.find_recent_action(
-                guild=guild,
-                action=audit_action,
-                target_id=target_id,
-                time_window_seconds=10
+                guild=guild, action=audit_action, target_id=target_id, time_window_seconds=10
             )
-            
+
             if not audit_entry or not audit_entry.user:
                 return
-                
+
             executor = guild.get_member(audit_entry.user.id)
             if not executor:
                 return
@@ -64,7 +60,7 @@ class SecurityListenerCog(commands.Cog):
                 action_type=action_type,
                 executor=executor,
                 target_id=target_id,
-                audit_entry=audit_entry
+                audit_entry=audit_entry,
             )
 
     @commands.Cog.listener()
@@ -82,7 +78,9 @@ class SecurityListenerCog(commands.Cog):
         )
 
     @commands.Cog.listener()
-    async def on_guild_channel_update(self, before: discord.abc.GuildChannel, after: discord.abc.GuildChannel) -> None:
+    async def on_guild_channel_update(
+        self, before: discord.abc.GuildChannel, after: discord.abc.GuildChannel
+    ) -> None:
         """Handle channel update events."""
         await self._handle_security_event(
             after.guild, "channel_update", discord.AuditLogAction.channel_update, after.id
@@ -118,25 +116,27 @@ class SecurityListenerCog(commands.Cog):
                 member.guild, "anti_raid_bot_add", discord.AuditLogAction.bot_add, member.id
             )
             return
-            
+
         async with self.bot.db.session() as session:
-            settings_db = await GuildRepository.get_module_settings(session, member.guild.id, "security")
+            settings_db = await GuildRepository.get_module_settings(
+                session, member.guild.id, "security"
+            )
             if not settings_db or not settings_db.enabled:
                 return
 
             settings = SecuritySettings.from_dict(settings_db.config)
-            
+
             # For mass joins, the executor is conceptually the guild itself tracking joins over time
-            # So we pass the guild owner as a placeholder executor to the velocity check, 
+            # So we pass the guild owner as a placeholder executor to the velocity check,
             # though it doesn't matter for global guild thresholds
             exceeded = await self.security_service.raid_service.add_action_and_check(
                 guild_id=member.guild.id,
                 action_type="anti_raid_mass_join",
                 rule=settings.anti_raid.mass_join,
-                target_id=None # Global counter
+                target_id=None,  # Global counter
             )
-            
+
             if exceeded:
                 # Trigger raid lockdown
                 # For raid defense, punishment usually means banning the recently joined members or enabling verification
-                pass # Implementation specific to Raid protocol
+                pass  # Implementation specific to Raid protocol

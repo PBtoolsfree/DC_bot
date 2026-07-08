@@ -136,9 +136,7 @@ class MemberRepository:
             The newly created Warning.
         """
         # Ensure member data exists
-        member = await MemberRepository.get_or_create_member(
-            session, guild_id, user_id
-        )
+        member = await MemberRepository.get_or_create_member(session, guild_id, user_id)
 
         warning = Warning(
             guild_id=guild_id,
@@ -236,9 +234,7 @@ class MemberRepository:
         Returns:
             The pardoned Warning, or None if not found.
         """
-        result = await session.execute(
-            select(Warning).where(Warning.id == warning_id)
-        )
+        result = await session.execute(select(Warning).where(Warning.id == warning_id))
         warning = result.scalar_one_or_none()
 
         if warning is None or not warning.is_active:
@@ -249,9 +245,7 @@ class MemberRepository:
         warning.pardoned_at = datetime.now(timezone.utc)
 
         # Decrement member's warning count
-        member = await MemberRepository.get_member(
-            session, warning.guild_id, warning.user_id
-        )
+        member = await MemberRepository.get_member(session, warning.guild_id, warning.user_id)
         if member is not None and member.total_warnings > 0:
             member.total_warnings -= 1
 
@@ -276,9 +270,7 @@ class MemberRepository:
         Returns:
             Number of warnings cleared.
         """
-        warnings = await MemberRepository.get_warnings(
-            session, guild_id, user_id, active_only=True
-        )
+        warnings = await MemberRepository.get_warnings(session, guild_id, user_id, active_only=True)
 
         now = datetime.now(timezone.utc)
         for warning in warnings:
@@ -333,7 +325,9 @@ class MemberRepository:
         member = await MemberRepository.get_member(session, guild_id, user_id)
         member_data_id = member.id if member else None
 
-        action_type_str = action_type.value if isinstance(action_type, ModActionType) else str(action_type)
+        action_type_str = (
+            action_type.value if isinstance(action_type, ModActionType) else str(action_type)
+        )
         action = ModAction(
             guild_id=guild_id,
             user_id=user_id,
@@ -392,7 +386,9 @@ class MemberRepository:
         if user_id is not None:
             query = query.where(ModAction.user_id == user_id)
         if action_type is not None:
-            action_type_val = action_type.value if isinstance(action_type, ModActionType) else str(action_type)
+            action_type_val = (
+                action_type.value if isinstance(action_type, ModActionType) else str(action_type)
+            )
             query = query.where(ModAction.action_type == action_type_val)
 
         result = await session.execute(query)
@@ -414,9 +410,7 @@ class MemberRepository:
         Returns:
             Total action count.
         """
-        query = select(func.count(ModAction.id)).where(
-            ModAction.guild_id == guild_id
-        )
+        query = select(func.count(ModAction.id)).where(ModAction.guild_id == guild_id)
         if user_id is not None:
             query = query.where(ModAction.user_id == user_id)
 

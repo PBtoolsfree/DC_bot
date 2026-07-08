@@ -10,10 +10,8 @@ Provides:
 from __future__ import annotations
 
 import asyncio
-import os
-from datetime import datetime, timezone
-from typing import AsyncGenerator
-from unittest.mock import AsyncMock, MagicMock, PropertyMock
+from collections.abc import AsyncGenerator
+from unittest.mock import AsyncMock, MagicMock
 
 import discord
 import pytest
@@ -26,7 +24,6 @@ from sqlalchemy.ext.asyncio import (
 )
 
 from bot.database.models.base import Base
-
 
 # ======================================================================
 # Event Loop
@@ -108,7 +105,21 @@ class MockRole:
 @pytest.fixture
 def mock_guild() -> MagicMock:
     """Create a mock Discord guild."""
-    guild = MagicMock(spec=["id", "name", "owner_id", "member_count", "icon", "me", "members", "features", "verification_level", "explicit_content_filter", "roles"])
+    guild = MagicMock(
+        spec=[
+            "id",
+            "name",
+            "owner_id",
+            "member_count",
+            "icon",
+            "me",
+            "members",
+            "features",
+            "verification_level",
+            "explicit_content_filter",
+            "roles",
+        ]
+    )
     guild.id = 123456789012345678
     guild.name = "Test Server"
     guild.owner_id = 123456789012345678

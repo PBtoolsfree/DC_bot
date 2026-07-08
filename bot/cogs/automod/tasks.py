@@ -59,7 +59,6 @@ class AutoModTasksCog(commands.Cog):
         # This will be fully implemented alongside the Scheduler module.
         # For now, timeouts expire automatically in Discord, so we just
         # need to sync the DB state if required.
-        pass
 
     @cleanup_expired_punishments.before_loop
     async def before_cleanup(self) -> None:

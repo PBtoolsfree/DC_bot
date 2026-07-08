@@ -10,8 +10,8 @@ if TYPE_CHECKING:
 
 async def setup(bot: ManagementBot) -> None:
     """Load the security cogs."""
-    from .security_listener import SecurityListenerCog
     from .security_config import SecurityConfigCog
+    from .security_listener import SecurityListenerCog
     from .tasks import SecurityTasksCog
 
     await bot.add_cog(SecurityListenerCog(bot))

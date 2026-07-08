@@ -3,13 +3,13 @@
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select, func
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from bot.database.models.logging import ActionLog
 from dashboard.backend.core.database import get_db
 from dashboard.backend.core.security import get_current_user
 from dashboard.backend.services.rbac_service import RBACService
-from bot.database.models.logging import ActionLog
 
 router = APIRouter()
 
@@ -18,10 +18,12 @@ router = APIRouter()
 async def get_analytics(
     guild_id: int,
     current_user: dict[str, Any] = Depends(get_current_user),
-    session: AsyncSession = Depends(get_db)
+    session: AsyncSession = Depends(get_db),
 ) -> dict[str, Any]:
     """Fetch high-level analytics for the guild dashboard."""
-    has_perm = await RBACService.has_permission(session, guild_id, current_user["id"], "view_analytics")
+    has_perm = await RBACService.has_permission(
+        session, guild_id, current_user["id"], "view_analytics"
+    )
     if not has_perm:
         raise HTTPException(status_code=403, detail="Forbidden")
 
@@ -33,11 +35,11 @@ async def get_analytics(
     )
     result = await session.execute(stmt)
     severity_counts = {str(sev): count for sev, count in result.all()}
-    
+
     # In a full implementation, we'd also join against Warnings, Incidents, etc.
 
     return {
         "total_events": sum(severity_counts.values()),
         "severity_distribution": severity_counts,
-        "recent_activity_score": severity_counts.get("3", 0) * 10 + severity_counts.get("2", 0) * 5
+        "recent_activity_score": severity_counts.get("3", 0) * 10 + severity_counts.get("2", 0) * 5,
     }

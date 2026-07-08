@@ -34,14 +34,12 @@ class MemberLogsCog(commands.Cog):
         if not settings:
             return
 
-        embed = EmbedBuilder.log(
-            action="Member Joined",
-            target=member,
-            color=discord.Color.green()
-        )
-        
+        embed = EmbedBuilder.log(action="Member Joined", target=member, color=discord.Color.green())
+
         account_age = discord.utils.utcnow() - member.created_at
-        embed.add_field(name="Account Created", value=f"<t:{int(member.created_at.timestamp())}:R>", inline=True)
+        embed.add_field(
+            name="Account Created", value=f"<t:{int(member.created_at.timestamp())}:R>", inline=True
+        )
         embed.add_field(name="Account Age", value=f"{account_age.days} days", inline=True)
 
         async with self.bot.db.session() as session:
@@ -54,7 +52,7 @@ class MemberLogsCog(commands.Cog):
                 executor=member,
                 target_id=member.id,
                 after={"account_age_days": account_age.days, "bot": member.bot},
-                embed=embed
+                embed=embed,
             )
 
     @commands.Cog.listener()
@@ -75,9 +73,9 @@ class MemberLogsCog(commands.Cog):
             action="Member Left / Kicked",
             target=member,
             executor=executor if executor.id != member.id else None,
-            color=discord.Color.dark_red()
+            color=discord.Color.dark_red(),
         )
-        
+
         roles = [r.mention for r in member.roles if not r.is_default()]
         if roles:
             embed.add_field(name="Roles", value=" ".join(roles)[:1024], inline=False)
@@ -92,7 +90,7 @@ class MemberLogsCog(commands.Cog):
                 executor=executor,
                 target_id=member.id,
                 before={"roles": [r.id for r in member.roles]},
-                embed=embed
+                embed=embed,
             )
 
     @commands.Cog.listener()
@@ -103,46 +101,58 @@ class MemberLogsCog(commands.Cog):
 
         if before.nick != after.nick:
             embed = EmbedBuilder.log(
-                action="Nickname Changed",
-                target=after,
-                executor=after,
-                color=discord.Color.blue()
+                action="Nickname Changed", target=after, executor=after, color=discord.Color.blue()
             )
             embed.add_field(name="Before", value=before.nick or "[No Nickname]", inline=True)
             embed.add_field(name="After", value=after.nick or "[No Nickname]", inline=True)
-            
+
             async with self.bot.db.session() as session:
                 await self.logging_service.emit_log(
-                    session=session, guild=after.guild, settings=settings,
-                    action_type="nick_change", severity=1, executor=after, target_id=after.id,
-                    before={"nick": before.nick}, after={"nick": after.nick}, embed=embed
+                    session=session,
+                    guild=after.guild,
+                    settings=settings,
+                    action_type="nick_change",
+                    severity=1,
+                    executor=after,
+                    target_id=after.id,
+                    before={"nick": before.nick},
+                    after={"nick": after.nick},
+                    embed=embed,
                 )
-                
+
         elif before.roles != after.roles:
             added = [r for r in after.roles if r not in before.roles]
             removed = [r for r in before.roles if r not in after.roles]
-            
+
             executor = after
             audit_user = await self.audit_service.get_executor_for_action(
                 after.guild, discord.AuditLogAction.member_role_update, after.id, 5
             )
             if audit_user:
                 executor = audit_user
-                
+
             embed = EmbedBuilder.log(
-                action="Roles Updated",
-                target=after,
-                executor=executor,
-                color=discord.Color.blue()
+                action="Roles Updated", target=after, executor=executor, color=discord.Color.blue()
             )
             if added:
-                embed.add_field(name="Added", value=" ".join([r.mention for r in added]), inline=False)
+                embed.add_field(
+                    name="Added", value=" ".join([r.mention for r in added]), inline=False
+                )
             if removed:
-                embed.add_field(name="Removed", value=" ".join([r.mention for r in removed]), inline=False)
-                
+                embed.add_field(
+                    name="Removed", value=" ".join([r.mention for r in removed]), inline=False
+                )
+
             async with self.bot.db.session() as session:
                 await self.logging_service.emit_log(
-                    session=session, guild=after.guild, settings=settings,
-                    action_type="role_update", severity=2, executor=executor, target_id=after.id,
-                    before={"roles": [r.id for r in before.roles]}, after={"roles": [r.id for r in after.roles]}, embed=embed
+                    session=session,
+                    guild=after.guild,
+                    settings=settings,
+                    action_type="role_update",
+                    severity=2,
+                    executor=executor,
+                    target_id=after.id,
+                    before={"roles": [r.id for r in before.roles]},
+                    after={"roles": [r.id for r in after.roles]},
+                    embed=embed,
                 )

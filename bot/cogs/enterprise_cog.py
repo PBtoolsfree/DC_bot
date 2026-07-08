@@ -4,10 +4,10 @@ import discord
 from discord.ext import commands
 
 from bot.database.core import db
-from bot.services.welcome.welcome_service import WelcomeService
 from bot.services.welcome.autorole_service import AutoRoleService
-from bot.services.xp.xp_service import XPService
+from bot.services.welcome.welcome_service import WelcomeService
 from bot.services.xp.voice_service import VoiceSessionService
+from bot.services.xp.xp_service import XPService
 
 
 class EnterpriseCog(commands.Cog):
@@ -31,27 +31,33 @@ class EnterpriseCog(commands.Cog):
         """Handles XP generation."""
         if message.author.bot or not message.guild:
             return
-            
+
         async with db.session() as session:
             await self.xp_service.handle_message(session, message)
             await session.commit()
 
     @commands.Cog.listener()
-    async def on_voice_state_update(self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState) -> None:
+    async def on_voice_state_update(
+        self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState
+    ) -> None:
         """Tracks Voice XP sessions."""
         if member.bot:
             return
-            
+
         # Left voice or muted
         if before.channel and (not after.channel or after.self_mute or after.server_mute):
             minutes = await VoiceSessionService.leave_voice(member.id)
             if minutes > 0:
                 async with db.session() as session:
                     from bot.services.xp.providers.voice_provider import VoiceXPProvider
+
                     provider = VoiceXPProvider()
-                    await provider.process_event(session, {"guild_id": member.guild.id, "user_id": member.id, "minutes": minutes})
+                    await provider.process_event(
+                        session,
+                        {"guild_id": member.guild.id, "user_id": member.id, "minutes": minutes},
+                    )
                     await session.commit()
-                    
+
         # Joined voice and not muted
         elif after.channel and not before.channel and not after.self_mute and not after.server_mute:
             await VoiceSessionService.join_voice(member.id)

@@ -42,7 +42,7 @@ class ServerLogsCog(commands.Cog):
             action="Channel Created",
             executor=executor,
             channel=channel,
-            color=discord.Color.green()
+            color=discord.Color.green(),
         )
         embed.add_field(name="Name", value=channel.name, inline=True)
         embed.add_field(name="Type", value=str(channel.type), inline=True)
@@ -58,7 +58,7 @@ class ServerLogsCog(commands.Cog):
                 target_id=channel.id,
                 channel=channel,
                 after={"name": channel.name, "type": str(channel.type)},
-                embed=embed
+                embed=embed,
             )
 
     @commands.Cog.listener()
@@ -72,9 +72,7 @@ class ServerLogsCog(commands.Cog):
         )
 
         embed = EmbedBuilder.log(
-            action="Channel Deleted",
-            executor=executor,
-            color=discord.Color.red()
+            action="Channel Deleted", executor=executor, color=discord.Color.red()
         )
         embed.add_field(name="Name", value=channel.name, inline=True)
         embed.add_field(name="Type", value=str(channel.type), inline=True)
@@ -89,7 +87,7 @@ class ServerLogsCog(commands.Cog):
                 executor=executor,
                 target_id=channel.id,
                 before={"name": channel.name, "type": str(channel.type)},
-                embed=embed
+                embed=embed,
             )
-            
+
     # Similar implementations exist for Role creation/deletion, Guild updates, etc.

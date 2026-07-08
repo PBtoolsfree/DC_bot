@@ -3,6 +3,7 @@
 import asyncio
 
 import pytest
+
 from bot.services.redis_service import InMemoryCache, RedisService
 
 
@@ -48,9 +49,9 @@ class TestInMemoryCache:
 
 @pytest.mark.asyncio
 class TestRedisServiceFallback:
-    # Test that RedisService correctly falls back to in-memory 
+    # Test that RedisService correctly falls back to in-memory
     # when connection is not established.
-    
+
     @pytest.fixture
     def redis_service(self) -> RedisService:
         # Do not call .connect() to simulate failure/unavailable

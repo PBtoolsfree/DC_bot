@@ -10,12 +10,12 @@ in both slash commands and context menu commands. Includes:
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from enum import IntEnum
 from functools import wraps
-from typing import TYPE_CHECKING, Any, Callable, Concatenate, ParamSpec, TypeVar
+from typing import TYPE_CHECKING, Any, Concatenate, ParamSpec, TypeVar
 
 import discord
-from discord import app_commands
 
 from bot.utils.constants import Emojis
 from bot.utils.logger import get_logger
@@ -79,11 +79,7 @@ def get_permission_level(
     if permissions.manage_guild or permissions.manage_channels:
         return PermissionLevel.MODERATOR
 
-    if (
-        permissions.manage_messages
-        or permissions.kick_members
-        or permissions.ban_members
-    ):
+    if permissions.manage_messages or permissions.kick_members or permissions.ban_members:
         return PermissionLevel.HELPER
 
     return PermissionLevel.MEMBER
@@ -164,9 +160,7 @@ def require_permission(
             **kwargs: P.kwargs,
         ) -> Any:
             # Must be in a guild
-            if interaction.guild is None or not isinstance(
-                interaction.user, discord.Member
-            ):
+            if interaction.guild is None or not isinstance(interaction.user, discord.Member):
                 await interaction.response.send_message(
                     f"{Emojis.ERROR} This command can only be used in a server.",
                     ephemeral=True,
@@ -241,14 +235,11 @@ def require_premium() -> Callable[
             from bot.database.repositories.guild_repo import GuildRepository
 
             async with bot.db.session() as session:
-                is_premium = await GuildRepository.is_premium(
-                    session, interaction.guild.id
-                )
+                is_premium = await GuildRepository.is_premium(session, interaction.guild.id)
 
             if not is_premium:
                 await interaction.response.send_message(
-                    f"{Emojis.CROWN} This is a **Premium** feature. "
-                    f"Upgrade to unlock it!",
+                    f"{Emojis.CROWN} This is a **Premium** feature. " f"Upgrade to unlock it!",
                     ephemeral=True,
                 )
                 return None

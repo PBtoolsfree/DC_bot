@@ -1,8 +1,6 @@
 """Verification Session Service."""
 
 import secrets
-import hashlib
-from datetime import datetime, timedelta, timezone
 
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -26,11 +24,11 @@ class SessionService:
         verification_type: str,
         risk_score: int,
         expected_answer: str | None,
-        timeout_minutes: int
+        timeout_minutes: int,
     ) -> VerificationSession:
         """Create a new signed session."""
         token = SessionService.generate_token()
-        
+
         # For Captchas, storing the raw expected answer is fine since they are short-lived.
         v_session = VerificationSession(
             session_id=token,
@@ -40,9 +38,9 @@ class SessionService:
             risk_score=risk_score,
             expected_answer=expected_answer,
             expires_at=expires_at,
-            state="challenge_issued"
+            state="challenge_issued",
         )
-        
+
         session.add(v_session)
         await session.flush()
         return v_session
@@ -55,11 +53,13 @@ class SessionService:
         return result.scalar_one_or_none()
 
     @staticmethod
-    def validate_answer(v_session: VerificationSession, user_provided: str, is_case_sensitive: bool = False) -> bool:
+    def validate_answer(
+        v_session: VerificationSession, user_provided: str, is_case_sensitive: bool = False
+    ) -> bool:
         """Fallback raw validation if provider validation isn't used."""
         if not v_session.expected_answer:
             return True
-            
+
         if is_case_sensitive:
             return v_session.expected_answer == user_provided
         return v_session.expected_answer.lower() == user_provided.lower()
@@ -72,7 +72,7 @@ class SessionService:
             .values(state="verified")
         )
         await session.execute(stmt)
-        
+
     @staticmethod
     async def increment_attempts(session: AsyncSession, token: str) -> None:
         stmt = (

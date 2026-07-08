@@ -2,13 +2,9 @@
 
 from __future__ import annotations
 
-import asyncio
-
 from discord.ext import commands, tasks
 
 from bot.core.bot import ManagementBot
-from bot.database.repositories.guild_repo import GuildRepository
-from bot.database.schemas.logging import LoggingSettings
 from bot.services.logging.retention_service import RetentionService
 from bot.utils.logger import get_logger
 
@@ -29,15 +25,15 @@ class LoggingTasksCog(commands.Cog):
     async def log_cleanup_task(self) -> None:
         """Cleans up logs older than the guild's retention policy."""
         logger.info("logging_tasks.cleanup.started")
-        
-        # In a real enterprise system, we would iterate over all guilds or 
+
+        # In a real enterprise system, we would iterate over all guilds or
         # use a global retention policy for the free tier.
         # Here we demonstrate a global 30 day purge for simplicity.
-        
+
         async with self.bot.db.session() as session:
             await RetentionService.cleanup_expired_logs(session, 30)
             await session.commit()
-            
+
         logger.info("logging_tasks.cleanup.completed")
 
     @log_cleanup_task.before_loop

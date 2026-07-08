@@ -1,7 +1,7 @@
 """Voice Tracking Service for XP."""
 
-import time
 import logging
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -23,20 +23,20 @@ class VoiceSessionService:
         join_time = cls._active_sessions.pop(user_id, None)
         if not join_time:
             return 0
-            
+
         seconds = time.time() - join_time
         return int(seconds // 60)
-        
+
     @classmethod
     async def get_active_minutes(cls, user_id: int) -> int:
         """Calculate how many minutes so far without popping the session."""
         join_time = cls._active_sessions.get(user_id)
         if not join_time:
             return 0
-            
+
         seconds = time.time() - join_time
         return int(seconds // 60)
-        
+
     @classmethod
     async def reset_session(cls, user_id: int) -> None:
         """Resets the timer after committing periodic XP."""

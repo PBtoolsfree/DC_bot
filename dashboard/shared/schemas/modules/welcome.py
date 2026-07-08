@@ -5,6 +5,7 @@ from pydantic import BaseModel, Field
 
 class WelcomeSettingsSchema(BaseModel):
     """Schema for Welcome/Goodbye config."""
+
     guild_id: str
     welcome_enabled: bool
     welcome_channel_id: str | None
@@ -17,6 +18,7 @@ class WelcomeSettingsSchema(BaseModel):
 
 class AutoRoleSchema(BaseModel):
     """Schema for Autorole config."""
+
     id: int | None = None
     role_id: str
     target: str = Field(..., pattern="^(human|bot|all)$")

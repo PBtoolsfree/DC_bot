@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import datetime
-from typing import Sequence
+from collections.abc import Sequence
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -16,18 +16,11 @@ class SearchService:
 
     @staticmethod
     async def get_timeline(
-        session: AsyncSession,
-        guild_id: int,
-        user_id: int | None = None,
-        limit: int = 50
+        session: AsyncSession, guild_id: int, user_id: int | None = None, limit: int = 50
     ) -> Sequence[ActionLog]:
         """Fetch a chronological timeline for a specific user or the whole guild."""
         return await LogRepository.search_logs(
-            session=session,
-            guild_id=guild_id,
-            user_id=user_id,
-            limit=limit,
-            offset=0
+            session=session, guild_id=guild_id, user_id=user_id, limit=limit, offset=0
         )
 
     @staticmethod
@@ -39,15 +32,17 @@ class SearchService:
         channel_id: int | None = None,
         days_ago: int | None = None,
         limit: int = 50,
-        page: int = 1
+        page: int = 1,
     ) -> Sequence[ActionLog]:
         """Search with pagination and filters."""
         start_date = None
         if days_ago:
-            start_date = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=days_ago)
-            
+            start_date = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(
+                days=days_ago
+            )
+
         offset = (page - 1) * limit
-        
+
         return await LogRepository.search_logs(
             session=session,
             guild_id=guild_id,
@@ -56,5 +51,5 @@ class SearchService:
             channel_id=channel_id,
             start_date=start_date,
             limit=limit,
-            offset=offset
+            offset=offset,
         )

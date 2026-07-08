@@ -36,7 +36,7 @@ class AuditLogService:
             async for entry in guild.audit_logs(action=action, limit=10):
                 if target_id and getattr(entry.target, "id", None) != target_id:
                     continue
-                    
+
                 time_diff = (now - entry.created_at).total_seconds()
                 if time_diff > time_window_seconds:
                     continue
@@ -51,7 +51,7 @@ class AuditLogService:
             pass
         except discord.HTTPException as e:
             logger.error("audit_log.http_error", error=str(e), guild_id=guild.id)
-            
+
         return None
 
     async def clear_cache(self) -> None:

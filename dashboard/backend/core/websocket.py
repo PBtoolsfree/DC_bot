@@ -7,7 +7,7 @@ from fastapi import WebSocket
 
 class ConnectionManager:
     """Manages active WebSocket connections."""
-    
+
     def __init__(self) -> None:
         # Map of guild_id to list of active websockets
         self.active_connections: dict[int, list[WebSocket]] = {}
@@ -34,7 +34,7 @@ class ConnectionManager:
                 try:
                     await connection.send_json(message)
                 except Exception:
-                    pass # Handle stale connections
+                    pass  # Handle stale connections
 
 
 ws_manager = ConnectionManager()

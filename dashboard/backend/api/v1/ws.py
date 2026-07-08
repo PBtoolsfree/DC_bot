@@ -1,11 +1,11 @@
 """WebSocket endpoint."""
 
-from fastapi import APIRouter, Depends, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from jose import JWTError, jwt
 
-from dashboard.backend.core.security import SECRET_KEY, ALGORITHM
-from dashboard.backend.core.websocket import ws_manager
 from bot.utils.logger import get_logger
+from dashboard.backend.core.security import ALGORITHM, SECRET_KEY
+from dashboard.backend.core.websocket import ws_manager
 
 logger = get_logger(__name__)
 router = APIRouter()
@@ -27,9 +27,9 @@ async def websocket_endpoint(websocket: WebSocket, guild_id: int, token: str) ->
     if not user_id:
         await websocket.close(code=1008)
         return
-        
+
     # In a full implementation, we must check RBAC here to ensure `user_id` has access to `guild_id`
-    
+
     await ws_manager.connect(websocket, guild_id)
     try:
         while True:

@@ -6,16 +6,11 @@ The caller (typically a service layer) manages the session lifecycle.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.database.models.guild import GuildConfig, GuildModuleSettings, GuildPremium
 from bot.utils.logger import get_logger
-
-if TYPE_CHECKING:
-    pass
 
 logger = get_logger(__name__)
 
@@ -42,9 +37,7 @@ class GuildRepository:
         Returns:
             GuildConfig if found, None otherwise.
         """
-        result = await session.execute(
-            select(GuildConfig).where(GuildConfig.id == guild_id)
-        )
+        result = await session.execute(select(GuildConfig).where(GuildConfig.id == guild_id))
         return result.scalar_one_or_none()
 
     @staticmethod
@@ -175,9 +168,7 @@ class GuildRepository:
         Returns:
             The existing or newly created GuildModuleSettings.
         """
-        settings = await GuildRepository.get_module_settings(
-            session, guild_id, module_name
-        )
+        settings = await GuildRepository.get_module_settings(session, guild_id, module_name)
         if settings is not None:
             return settings
 
@@ -211,9 +202,7 @@ class GuildRepository:
         Returns:
             Updated settings, or None if not found.
         """
-        settings = await GuildRepository.get_module_settings(
-            session, guild_id, module_name
-        )
+        settings = await GuildRepository.get_module_settings(session, guild_id, module_name)
         if settings is None:
             return None
 
@@ -240,9 +229,7 @@ class GuildRepository:
             List of all GuildModuleSettings for this guild.
         """
         result = await session.execute(
-            select(GuildModuleSettings).where(
-                GuildModuleSettings.guild_id == guild_id
-            )
+            select(GuildModuleSettings).where(GuildModuleSettings.guild_id == guild_id)
         )
         return list(result.scalars().all())
 

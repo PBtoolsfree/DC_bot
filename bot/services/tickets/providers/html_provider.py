@@ -1,6 +1,6 @@
 """HTML Transcript Provider."""
 
-from jinja2 import Environment, BaseLoader
+from jinja2 import BaseLoader, Environment
 
 from bot.database.models.tickets import Ticket, TicketMessage
 from bot.services.tickets.providers.base import TranscriptProvider
@@ -50,6 +50,7 @@ HTML_TEMPLATE = """
 </html>
 """
 
+
 class HTMLTranscriptProvider(TranscriptProvider):
     """Generates an HTML transcript."""
 
@@ -59,9 +60,9 @@ class HTMLTranscriptProvider(TranscriptProvider):
 
     async def generate(self, ticket: Ticket, messages: list[TicketMessage]) -> bytes:
         """Generate HTML using Jinja2."""
-        
+
         env = Environment(loader=BaseLoader())
         template = env.from_string(HTML_TEMPLATE)
-        
+
         html = template.render(ticket=ticket, messages=messages)
         return html.encode("utf-8")

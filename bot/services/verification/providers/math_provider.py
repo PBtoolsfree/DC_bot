@@ -2,7 +2,7 @@
 
 import random
 
-from bot.services.verification.providers.base import CaptchaProvider, CaptchaChallenge
+from bot.services.verification.providers.base import CaptchaChallenge, CaptchaProvider
 
 
 class MathCaptchaProvider(CaptchaProvider):
@@ -16,7 +16,7 @@ class MathCaptchaProvider(CaptchaProvider):
         """Generate a random addition/subtraction problem."""
         operations = ["+", "-", "*"]
         op = random.choice(operations)
-        
+
         if op == "*":
             a = random.randint(2, 9)
             b = random.randint(2, 9)
@@ -31,13 +31,10 @@ class MathCaptchaProvider(CaptchaProvider):
                 expected = a - b
             else:
                 expected = a + b
-                
+
         prompt = f"What is **{a} {op} {b}**?"
-        
-        return CaptchaChallenge(
-            expected_answer=str(expected),
-            prompt=prompt
-        )
+
+        return CaptchaChallenge(expected_answer=str(expected), prompt=prompt)
 
     async def validate_answer(self, expected_answer: str, user_provided_answer: str) -> bool:
         """Validate math answer."""

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import discord
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -43,9 +43,7 @@ class LoggingService:
         Returns:
             The TextChannel if configured and valid, None otherwise.
         """
-        settings = await GuildRepository.get_or_create_module_settings(
-            session, guild.id, "logs"
-        )
+        settings = await GuildRepository.get_or_create_module_settings(session, guild.id, "logs")
         channel_id = settings.config.get("mod_log_channel_id")
 
         if not channel_id:
@@ -143,9 +141,7 @@ class LoggingService:
             guild_id: Discord guild ID.
             channel_id: The channel ID to set, or None to disable.
         """
-        settings = await GuildRepository.get_or_create_module_settings(
-            session, guild_id, "logs"
-        )
+        settings = await GuildRepository.get_or_create_module_settings(session, guild_id, "logs")
 
         config = settings.config.copy()
         if channel_id is None:

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import asyncio
-from datetime import datetime, timedelta, timezone
 
 from discord.ext import commands, tasks
 
@@ -30,21 +29,21 @@ class SecurityTasksCog(commands.Cog):
         """Cleans up old incidents from the database (e.g. older than 90 days)."""
         logger.info("security_tasks.incident_cleanup.started")
         # In a full production implementation, we would execute a DELETE query here.
-        await asyncio.sleep(1) 
+        await asyncio.sleep(1)
         logger.info("security_tasks.incident_cleanup.completed")
 
     @incident_cleanup_task.before_loop
     async def before_incident_cleanup(self) -> None:
         await self.bot.wait_until_ready()
 
-    @tasks.loop(hours=168) # Weekly
+    @tasks.loop(hours=168)  # Weekly
     async def snapshot_backup_task(self) -> None:
         """Creates automatic snapshots for guilds with the feature enabled."""
         logger.info("security_tasks.snapshot_backup.started")
         # Implementation would iterate over premium/enabled guilds and create snapshots
         await asyncio.sleep(1)
         logger.info("security_tasks.snapshot_backup.completed")
-        
+
     @snapshot_backup_task.before_loop
     async def before_snapshot_backup(self) -> None:
         await self.bot.wait_until_ready()

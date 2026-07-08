@@ -36,16 +36,22 @@ class RuleConfig(BaseModel):
     threshold: int | None = Field(None, ge=1, description="Triggers required before action")
     cooldown_seconds: int | None = Field(None, ge=1, description="Time window for triggers")
     actions: list[RuleAction] = Field(default_factory=list, description="Actions to execute")
-    
+
     # Exceptions
     ignored_roles: list[int] = Field(default_factory=list, description="Role IDs to ignore")
     ignored_channels: list[int] = Field(default_factory=list, description="Channel IDs to ignore")
     ignored_users: list[int] = Field(default_factory=list, description="User IDs to ignore")
-    ignored_categories: list[int] = Field(default_factory=list, description="Category IDs to ignore")
-    
+    ignored_categories: list[int] = Field(
+        default_factory=list, description="Category IDs to ignore"
+    )
+
     # Lists
-    whitelist: list[str] = Field(default_factory=list, description="Allowed items (words, links, domains)")
-    blacklist: list[str] = Field(default_factory=list, description="Blocked items (words, links, domains)")
+    whitelist: list[str] = Field(
+        default_factory=list, description="Allowed items (words, links, domains)"
+    )
+    blacklist: list[str] = Field(
+        default_factory=list, description="Blocked items (words, links, domains)"
+    )
 
 
 class EscalationRule(BaseModel):
@@ -53,7 +59,9 @@ class EscalationRule(BaseModel):
 
     violation_count: int = Field(..., ge=2, description="Number of recent violations required")
     time_window_seconds: int = Field(..., ge=60, description="Time window for violations")
-    actions: list[RuleAction] = Field(default_factory=list, description="Actions to execute instead")
+    actions: list[RuleAction] = Field(
+        default_factory=list, description="Actions to execute instead"
+    )
 
 
 class AutoModSettings(BaseModel):
@@ -82,7 +90,7 @@ class AutoModSettings(BaseModel):
     words_profanity: RuleConfig = Field(default_factory=RuleConfig)
     words_custom: RuleConfig = Field(default_factory=RuleConfig)
     words_regex: RuleConfig = Field(default_factory=RuleConfig)
-    
+
     # Security / Abuse
     abuse_zalgo: RuleConfig = Field(default_factory=RuleConfig)
     abuse_invisible: RuleConfig = Field(default_factory=RuleConfig)

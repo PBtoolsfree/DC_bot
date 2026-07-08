@@ -29,7 +29,9 @@ class VoiceLogsCog(commands.Cog):
             return LoggingSettings.from_dict(db_settings.config)
 
     @commands.Cog.listener()
-    async def on_voice_state_update(self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState) -> None:
+    async def on_voice_state_update(
+        self, member: discord.Member, before: discord.VoiceState, after: discord.VoiceState
+    ) -> None:
         settings = await self._get_settings(member.guild.id)
         if not settings:
             return
@@ -40,14 +42,20 @@ class VoiceLogsCog(commands.Cog):
                 action="Voice Joined",
                 target=member,
                 channel=after.channel,
-                color=discord.Color.green()
+                color=discord.Color.green(),
             )
             async with self.bot.db.session() as session:
                 await self.logging_service.emit_log(
-                    session=session, guild=member.guild, settings=settings,
-                    action_type="voice_join", severity=1, executor=member,
-                    target_id=member.id, channel=after.channel,
-                    after={"channel": after.channel.id}, embed=embed
+                    session=session,
+                    guild=member.guild,
+                    settings=settings,
+                    action_type="voice_join",
+                    severity=1,
+                    executor=member,
+                    target_id=member.id,
+                    channel=after.channel,
+                    after={"channel": after.channel.id},
+                    embed=embed,
                 )
 
         # Voice Leave
@@ -56,30 +64,41 @@ class VoiceLogsCog(commands.Cog):
                 action="Voice Left",
                 target=member,
                 channel=before.channel,
-                color=discord.Color.dark_grey()
+                color=discord.Color.dark_grey(),
             )
             async with self.bot.db.session() as session:
                 await self.logging_service.emit_log(
-                    session=session, guild=member.guild, settings=settings,
-                    action_type="voice_leave", severity=1, executor=member,
-                    target_id=member.id, channel=before.channel,
-                    before={"channel": before.channel.id}, embed=embed
+                    session=session,
+                    guild=member.guild,
+                    settings=settings,
+                    action_type="voice_leave",
+                    severity=1,
+                    executor=member,
+                    target_id=member.id,
+                    channel=before.channel,
+                    before={"channel": before.channel.id},
+                    embed=embed,
                 )
 
         # Voice Move
         elif before.channel and after.channel and before.channel != after.channel:
             embed = EmbedBuilder.log(
-                action="Voice Moved",
-                target=member,
-                color=discord.Color.blue()
+                action="Voice Moved", target=member, color=discord.Color.blue()
             )
             embed.add_field(name="From", value=before.channel.mention, inline=True)
             embed.add_field(name="To", value=after.channel.mention, inline=True)
-            
+
             async with self.bot.db.session() as session:
                 await self.logging_service.emit_log(
-                    session=session, guild=member.guild, settings=settings,
-                    action_type="voice_move", severity=1, executor=member,
-                    target_id=member.id, channel=after.channel,
-                    before={"channel": before.channel.id}, after={"channel": after.channel.id}, embed=embed
+                    session=session,
+                    guild=member.guild,
+                    settings=settings,
+                    action_type="voice_move",
+                    severity=1,
+                    executor=member,
+                    target_id=member.id,
+                    channel=after.channel,
+                    before={"channel": before.channel.id},
+                    after={"channel": after.channel.id},
+                    embed=embed,
                 )

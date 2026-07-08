@@ -50,15 +50,15 @@ class MessageLogsCog(commands.Cog):
             target=message.author,
             executor=executor,
             channel=message.channel,
-            color=discord.Color.red()
+            color=discord.Color.red(),
         )
-        
+
         content = message.content or "[No Content]"
         if len(content) > 1024:
             content = content[:1021] + "..."
-            
+
         embed.add_field(name="Content", value=content, inline=False)
-        
+
         if message.attachments:
             urls = "\n".join([att.url for att in message.attachments])
             embed.add_field(name="Attachments", value=urls[:1024], inline=False)
@@ -73,8 +73,11 @@ class MessageLogsCog(commands.Cog):
                 executor=executor,
                 target_id=message.id,
                 channel=message.channel,
-                before={"content": message.content, "attachments": [a.url for a in message.attachments]},
-                embed=embed
+                before={
+                    "content": message.content,
+                    "attachments": [a.url for a in message.attachments],
+                },
+                embed=embed,
             )
 
     @commands.Cog.listener()
@@ -91,15 +94,17 @@ class MessageLogsCog(commands.Cog):
             target=before.author,
             executor=before.author,
             channel=before.channel,
-            color=discord.Color.orange()
+            color=discord.Color.orange(),
         )
-        
+
         b_content = before.content or "[No Content]"
         a_content = after.content or "[No Content]"
-        
+
         embed.add_field(name="Before", value=b_content[:1024], inline=False)
         embed.add_field(name="After", value=a_content[:1024], inline=False)
-        embed.add_field(name="Jump To Message", value=f"[Click Here]({after.jump_url})", inline=False)
+        embed.add_field(
+            name="Jump To Message", value=f"[Click Here]({after.jump_url})", inline=False
+        )
 
         async with self.bot.db.session() as session:
             await self.logging_service.emit_log(
@@ -114,5 +119,5 @@ class MessageLogsCog(commands.Cog):
                 before={"content": before.content},
                 after={"content": after.content},
                 metadata={"jump_url": after.jump_url},
-                embed=embed
+                embed=embed,
             )

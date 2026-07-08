@@ -5,6 +5,7 @@ from pathlib import Path
 
 LOCALES_DIR = Path("locales")
 
+
 class LocalizationService:
     """Loads and provides translated strings."""
 
@@ -17,12 +18,12 @@ class LocalizationService:
         if not path.exists():
             # Fallback to en-US
             path = LOCALES_DIR / "en-US" / f"{module}.json"
-            
+
         if not path.exists():
             return {}
 
         try:
-            with open(path, "r", encoding="utf-8") as f:
+            with open(path, encoding="utf-8") as f:
                 return json.load(f)
         except Exception:
             return {}
@@ -32,15 +33,16 @@ class LocalizationService:
         cache_key = f"{language}_{module}"
         if cache_key not in self.cache:
             self.cache[cache_key] = self._load_locale(language, module)
-            
-        text = self.cache[cache_key].get(key, key) # Fallback to the key itself if missing
-        
+
+        text = self.cache[cache_key].get(key, key)  # Fallback to the key itself if missing
+
         if kwargs:
             try:
                 return text.format(**kwargs)
             except KeyError:
                 return text
         return text
+
 
 # Global singleton instance
 locales = LocalizationService()

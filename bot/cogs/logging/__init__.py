@@ -10,12 +10,12 @@ if TYPE_CHECKING:
 
 async def setup(bot: ManagementBot) -> None:
     """Load the logging cogs."""
-    from .logs_message import MessageLogsCog
-    from .logs_member import MemberLogsCog
-    from .logs_server import ServerLogsCog
-    from .logs_voice import VoiceLogsCog
     from .logs_advanced import AdvancedLogsCog
     from .logs_config import LoggingConfigCog
+    from .logs_member import MemberLogsCog
+    from .logs_message import MessageLogsCog
+    from .logs_server import ServerLogsCog
+    from .logs_voice import VoiceLogsCog
     from .tasks import LoggingTasksCog
 
     await bot.add_cog(MessageLogsCog(bot))

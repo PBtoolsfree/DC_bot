@@ -1,7 +1,5 @@
 """Service for managing Hybrid Dashboard RBAC."""
 
-from typing import Any
-
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -18,8 +16,7 @@ class RBACService:
     ) -> DashboardMember | None:
         """Fetch the explicit dashboard role for a user in a specific guild."""
         stmt = select(DashboardMember).where(
-            DashboardMember.guild_id == guild_id,
-            DashboardMember.discord_user_id == discord_user_id
+            DashboardMember.guild_id == guild_id, DashboardMember.discord_user_id == discord_user_id
         )
         result = await session.execute(stmt)
         return result.scalar_one_or_none()
@@ -32,21 +29,24 @@ class RBACService:
         member = await RBACService.get_member_role(session, guild_id, discord_user_id)
         if not member:
             return False
-            
+
         if member.role in (DashboardRole.OWNER, DashboardRole.ADMIN):
             return True
-            
+
         if member.role == DashboardRole.CUSTOM:
             return member.permissions.get(permission_name, False)
-            
+
         # Hardcoded defaults for standard roles
         if member.role == DashboardRole.MODERATOR:
             return permission_name in [
-                "manage_moderation", "manage_automod", "manage_logs", 
-                "view_analytics", "manage_tickets"
+                "manage_moderation",
+                "manage_automod",
+                "manage_logs",
+                "view_analytics",
+                "manage_tickets",
             ]
-            
+
         if member.role == DashboardRole.VIEWER:
             return permission_name in ["view_analytics"]
-            
+
         return False

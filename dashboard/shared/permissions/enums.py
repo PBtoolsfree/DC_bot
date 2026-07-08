@@ -5,6 +5,7 @@ from enum import Enum
 
 class DashboardRole(str, Enum):
     """Pre-defined dashboard roles."""
+
     OWNER = "owner"
     ADMIN = "admin"
     MODERATOR = "moderator"
@@ -14,6 +15,7 @@ class DashboardRole(str, Enum):
 
 class GranularPermission(str, Enum):
     """Granular permissions for custom dashboard roles."""
+
     MANAGE_MODERATION = "manage_moderation"
     MANAGE_AUTOMOD = "manage_automod"
     MANAGE_SECURITY = "manage_security"

@@ -7,7 +7,6 @@ from bot.database.schemas.security import (
     AntiNukeConfig,
     AntiNukeRule,
     AntiRaidConfig,
-    AntiRaidRule,
     SecuritySettings,
     WhitelistConfig,
 )
@@ -36,10 +35,10 @@ def test_anti_nuke_rule_validation() -> None:
     # Test invalid time window
     with pytest.raises(ValidationError):
         AntiNukeRule(time_window_seconds=0)
-        
+
     # Test invalid action
     with pytest.raises(ValidationError):
-        AntiNukeRule(action="destroy_server") # type: ignore
+        AntiNukeRule(action="destroy_server")  # type: ignore
 
 
 def test_security_settings_defaults() -> None:
@@ -59,15 +58,12 @@ def test_security_settings_from_dict() -> None:
                 "enabled": True,
                 "threshold": 5,
                 "time_window_seconds": 15,
-                "action": "timeout"
-            }
+                "action": "timeout",
+            },
         },
-        "whitelist": {
-            "users": [123, 456],
-            "roles": [789]
-        }
+        "whitelist": {"users": [123, 456], "roles": [789]},
     }
-    
+
     settings = SecuritySettings.from_dict(data)
     assert settings.enabled is True
     assert settings.anti_nuke.enabled is True

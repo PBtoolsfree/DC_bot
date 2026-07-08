@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import asyncio
 from datetime import timedelta
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -10,11 +9,15 @@ import discord
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from bot.database.models.member import ModActionType, Warning
 from bot.database.repositories.guild_repo import GuildRepository
 from bot.database.repositories.member_repo import MemberRepository
 from bot.services.history_service import HistoryService
-from bot.services.moderation_service import BotHierarchyError, HierarchyError, ModerationError, ModerationService
+from bot.services.moderation_service import (
+    BotHierarchyError,
+    HierarchyError,
+    ModerationError,
+    ModerationService,
+)
 from bot.services.punishment_service import PunishmentService
 
 
@@ -48,7 +51,7 @@ class TestModerationService:
     ) -> None:
         """Should kick member and log action."""
         mock_guild.kick = AsyncMock()
-        
+
         await mod_service.kick_member(
             db_session, mock_guild, mock_member, mock_admin_member, "Rule violation"
         )
@@ -110,7 +113,7 @@ class TestModerationService:
     ) -> None:
         """Should ban member and log action."""
         mock_guild.ban = AsyncMock()
-        
+
         await mod_service.ban_member(
             db_session, mock_guild, mock_member, mock_admin_member, "Spam", 7
         )
@@ -119,7 +122,7 @@ class TestModerationService:
         mock_guild.ban.assert_called_once_with(
             mock_member, reason=f"By {mock_admin_member}: Spam", delete_message_days=7
         )
-        
+
         actions = await MemberRepository.get_actions(db_session, mock_guild.id)
         assert len(actions) == 1
         assert actions[0].action_type == "ban"
@@ -137,7 +140,7 @@ class TestModerationService:
         """Should ban then unban member and log action."""
         mock_guild.ban = AsyncMock()
         mock_guild.unban = AsyncMock()
-        
+
         await mod_service.softban_member(
             db_session, mock_guild, mock_member, mock_admin_member, "Cleanup", 1
         )
@@ -145,7 +148,7 @@ class TestModerationService:
 
         mock_guild.ban.assert_called_once()
         mock_guild.unban.assert_called_once()
-        
+
         actions = await MemberRepository.get_actions(db_session, mock_guild.id)
         assert len(actions) == 1
         assert actions[0].action_type == "softban"
@@ -162,7 +165,7 @@ class TestModerationService:
         """Should timeout member and log action."""
         mock_member.timeout = AsyncMock()
         duration = timedelta(hours=2)
-        
+
         await mod_service.timeout_member(
             db_session, mock_guild, mock_member, mock_admin_member, duration, "Spam"
         )
@@ -171,7 +174,7 @@ class TestModerationService:
         mock_member.timeout.assert_called_once_with(
             duration, reason=f"By {mock_admin_member}: Spam"
         )
-        
+
         actions = await MemberRepository.get_actions(db_session, mock_guild.id)
         assert len(actions) == 1
         assert actions[0].action_type == "timeout"
@@ -188,7 +191,7 @@ class TestModerationService:
     ) -> None:
         """Should raise ModerationError if timeout exceeds 28 days."""
         duration = timedelta(days=30)
-        
+
         with pytest.raises(ModerationError, match="cannot exceed 28 days"):
             await mod_service.timeout_member(
                 db_session, mock_guild, mock_member, mock_admin_member, duration, "Test"
@@ -206,11 +209,11 @@ class TestModerationService:
         channel = MagicMock()
         channel.guild = mock_guild
         channel.name = "general"
-        
+
         # Mock purge returning a list of 5 deleted messages
         messages = [MagicMock() for _ in range(5)]
         channel.purge = AsyncMock(return_value=messages)
-        
+
         deleted = await mod_service.purge_messages(
             db_session, channel, mock_admin_member, 10, "Cleanup"
         )
@@ -218,7 +221,7 @@ class TestModerationService:
 
         assert deleted == 5
         channel.purge.assert_called_once()
-        
+
         actions = await MemberRepository.get_actions(db_session, mock_guild.id)
         assert len(actions) == 1
         assert actions[0].action_type == "purge"
@@ -234,7 +237,7 @@ class TestModerationService:
     ) -> None:
         """Should raise ModerationError on invalid regex."""
         channel = MagicMock()
-        
+
         with pytest.raises(ModerationError, match="Invalid regex"):
             await mod_service.purge_messages(
                 db_session, channel, mock_admin_member, 10, "Test", regex_pattern="["
@@ -255,18 +258,16 @@ class TestModerationService:
         channel.name = "general"
         channel.overwrites_for = MagicMock(return_value=discord.PermissionOverwrite())
         channel.set_permissions = AsyncMock()
-        
-        await mod_service.lock_channel(
-            db_session, channel, mock_admin_member, "Raid"
-        )
+
+        await mod_service.lock_channel(db_session, channel, mock_admin_member, "Raid")
         await db_session.flush()
 
         channel.set_permissions.assert_called_once()
-        
+
         # Verify send_messages was set to False
         args, kwargs = channel.set_permissions.call_args
         assert kwargs["overwrite"].send_messages is False
-        
+
         actions = await MemberRepository.get_actions(db_session, mock_guild.id)
         assert len(actions) == 1
         assert actions[0].action_type == "lockdown"
@@ -292,11 +293,11 @@ class TestPunishmentService:
 
         assert warn.id is not None
         assert msg is None
-        
+
         warnings = await MemberRepository.get_warnings(db_session, mock_guild.id, mock_member.id)
         assert len(warnings) == 1
         assert warnings[0].reason == "First offense"
-        
+
         actions = await MemberRepository.get_actions(db_session, mock_guild.id)
         assert len(actions) == 1
         assert actions[0].action_type == "warn"
@@ -314,8 +315,10 @@ class TestPunishmentService:
         # Setup thresholds: 2 warnings = timeout
         await GuildRepository.get_or_create_config(db_session, mock_guild.id)
         await GuildRepository.get_or_create_module_settings(
-            db_session, mock_guild.id, "moderation",
-            {"warn_thresholds": {"2": {"action": "timeout", "duration": 3600}}}
+            db_session,
+            mock_guild.id,
+            "moderation",
+            {"warn_thresholds": {"2": {"action": "timeout", "duration": 3600}}},
         )
         await db_session.flush()
 
@@ -327,12 +330,12 @@ class TestPunishmentService:
         )
         await db_session.flush()
         assert msg1 is None
-        
+
         # Warning 2 - Should trigger timeout
         _, msg2 = await punishment_service.add_warning(
             db_session, mock_guild, mock_member, mock_admin_member, "Second"
         )
-        
+
         assert msg2 is not None
         assert "auto-timed out" in msg2
         punishment_service.mod_service.timeout_member.assert_called_once()
@@ -353,14 +356,14 @@ class TestPunishmentService:
                 db_session, mock_guild, mock_member, mock_admin_member, f"Warn {i}"
             )
         await db_session.flush()
-        
+
         count = await punishment_service.clear_warnings(
             db_session, mock_guild, mock_member, mock_admin_member
         )
         await db_session.flush()
-        
+
         assert count == 3
-        
+
         warnings = await MemberRepository.get_warnings(db_session, mock_guild.id, mock_member.id)
         assert len(warnings) == 0
 
@@ -376,10 +379,8 @@ class TestHistoryService:
         mock_member: MagicMock,
     ) -> None:
         """Should return a single info embed when history is empty."""
-        embeds = await HistoryService.get_user_history_embeds(
-            db_session, mock_guild, mock_member
-        )
-        
+        embeds = await HistoryService.get_user_history_embeds(db_session, mock_guild, mock_member)
+
         assert len(embeds) == 1
         assert "No moderation history found" in str(embeds[0].description)
 
@@ -399,12 +400,10 @@ class TestHistoryService:
                 db_session, mock_guild, mock_member, mock_admin_member, f"Warn {i}"
             )
         await db_session.flush()
-        
-        embeds = await HistoryService.get_user_history_embeds(
-            db_session, mock_guild, mock_member
-        )
-        
-        assert len(embeds) == 3 # 12 items / 5 per page = 3 pages
+
+        embeds = await HistoryService.get_user_history_embeds(db_session, mock_guild, mock_member)
+
+        assert len(embeds) == 3  # 12 items / 5 per page = 3 pages
         assert "Page 1/3" in str(embeds[0].footer.text)
         assert len(embeds[0].fields) == 5
         assert len(embeds[1].fields) == 5

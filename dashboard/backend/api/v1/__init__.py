@@ -2,7 +2,21 @@
 
 from fastapi import APIRouter
 
-from dashboard.backend.api.v1 import auth, guilds, members, settings, logs, ws, analytics, verification, tickets, backups, welcome, roles, xp
+from dashboard.backend.api.v1 import (
+    analytics,
+    auth,
+    backups,
+    guilds,
+    logs,
+    members,
+    roles,
+    settings,
+    tickets,
+    verification,
+    welcome,
+    ws,
+    xp,
+)
 
 router = APIRouter()
 

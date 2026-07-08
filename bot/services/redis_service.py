@@ -12,7 +12,8 @@ import time
 from typing import Any, TypeVar
 
 from redis.asyncio import Redis
-from redis.exceptions import ConnectionError as RedisConnectionError, TimeoutError as RedisTimeoutError
+from redis.exceptions import ConnectionError as RedisConnectionError
+from redis.exceptions import TimeoutError as RedisTimeoutError
 
 from bot.config import get_settings
 from bot.utils.logger import get_logger
@@ -24,7 +25,7 @@ T = TypeVar("T")
 
 class InMemoryCache:
     """A thread-safe, TTL-aware in-memory cache.
-    
+
     Used as a fallback when Redis is unavailable.
     """
 
@@ -60,18 +61,18 @@ class InMemoryCache:
         async with self._lock:
             if key not in self._cache:
                 self._cache[key] = (0, None)
-            
+
             value, expires_at = self._cache[key]
-            
+
             if expires_at is not None and time.time() > expires_at:
                 value = 0
                 expires_at = None
-                
+
             try:
                 new_value = int(value) + amount
             except (ValueError, TypeError):
                 new_value = amount
-                
+
             self._cache[key] = (new_value, expires_at)
             return new_value
 
@@ -100,7 +101,7 @@ class InMemoryCache:
 
 class RedisService:
     """High-level caching and rate limiting service.
-    
+
     Transparently falls back to InMemoryCache if Redis fails.
     """
 
@@ -136,7 +137,7 @@ class RedisService:
     async def close(self) -> None:
         """Close Redis connection."""
         if self.redis:
-            await self.redis.aclose() # type: ignore
+            await self.redis.aclose()  # type: ignore
             self.is_connected = False
 
     async def get(self, key: str) -> Any | None:
@@ -208,18 +209,20 @@ class RedisService:
                 pass
         return None
 
-    async def set_json(self, key: str, value: dict[str, Any] | list[Any], ex: int | None = None) -> None:
+    async def set_json(
+        self, key: str, value: dict[str, Any] | list[Any], ex: int | None = None
+    ) -> None:
         """Serialize and set a JSON string in cache."""
         await self.set(key, json.dumps(value), ex=ex)
 
     async def check_rate_limit(self, key: str, limit: int, window: int) -> bool:
         """Check if a rate limit has been exceeded.
-        
+
         Args:
             key: Unique identifier for the rate limit bucket.
             limit: Maximum number of actions allowed.
             window: Time window in seconds.
-            
+
         Returns:
             True if the action is ALLOWED (under limit).
             False if the action is RATE LIMITED (over limit).
@@ -227,5 +230,5 @@ class RedisService:
         count = await self.incr(key)
         if count == 1:
             await self.expire(key, window)
-            
+
         return count <= limit

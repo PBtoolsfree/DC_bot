@@ -15,7 +15,7 @@ def mock_guild() -> MagicMock:
     guild.features = ["COMMUNITY"]
     guild.verification_level = discord.VerificationLevel.high
     guild.explicit_content_filter = discord.ContentFilter.all_members
-    
+
     # Create safe roles
     safe_role = MagicMock(spec=discord.Role)
     safe_role.is_default.return_value = False
@@ -25,7 +25,7 @@ def mock_guild() -> MagicMock:
     safe_role.permissions.ban_members = False
     safe_role.permissions.manage_roles = False
     safe_role.permissions.manage_channels = False
-    
+
     guild.roles = [safe_role, safe_role]
     return guild
 
@@ -36,7 +36,7 @@ def test_health_score_perfect(mock_guild: MagicMock) -> None:
     settings.anti_nuke.channel_delete.enabled = True
     settings.anti_nuke.role_delete.enabled = True
     settings.anti_nuke.member_ban.enabled = True
-    
+
     settings.anti_raid.enabled = True
     settings.anti_raid.mass_join.enabled = True
     settings.anti_raid.invite_spam.enabled = True
@@ -53,8 +53,8 @@ def test_health_score_disabled() -> None:
 
 def test_health_score_missing_anti_nuke(mock_guild: MagicMock) -> None:
     settings = SecuritySettings(enabled=True)
-    settings.anti_nuke.enabled = False # -30 points
-    
+    settings.anti_nuke.enabled = False  # -30 points
+
     settings.anti_raid.enabled = True
     settings.anti_raid.mass_join.enabled = True
     settings.anti_raid.invite_spam.enabled = True
@@ -82,4 +82,4 @@ def test_health_score_dangerous_roles(mock_guild: MagicMock) -> None:
         mock_guild.roles.append(dangerous_role)
 
     score = RiskEngineService.calculate_health_score(mock_guild, settings)
-    assert score == 98 # 100 - (6-5)*2
+    assert score == 98  # 100 - (6-5)*2

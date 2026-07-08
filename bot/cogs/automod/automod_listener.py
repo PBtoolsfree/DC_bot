@@ -53,7 +53,7 @@ class AutoModListenerCog(commands.Cog):
             # We don't await the result if we just want it to drop
             # but we need to ensure the message wasn't flagged before executing command
             allowed = await self.automod_service.process_message(session, message)
-            
+
             # If the message was deleted or blocked by automod, we should technically
             # stop processing commands for it (though discord.py processes commands separately).
             # Usually handled by a global check, but discord.py's flow doesn't easily stop
@@ -67,7 +67,7 @@ class AutoModListenerCog(commands.Cog):
 
         if after.author.id in self.bot.settings.bot_owner_ids:
             return
-            
+
         if before.content == after.content:
             return
 
@@ -79,4 +79,3 @@ class AutoModListenerCog(commands.Cog):
         """Process member joins for username filters (future expansion)."""
         # Module 3 specifically mentions Username Filters
         # This can be implemented in ProfanityService and triggered here.
-        pass

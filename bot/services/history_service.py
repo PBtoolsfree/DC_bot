@@ -35,9 +35,7 @@ class HistoryService:
             session, guild.id, user.id, action_type=action_type
         )
         total_actions = len(actions)
-        active_warnings = await MemberRepository.get_warning_count(
-            session, guild.id, user.id
-        )
+        active_warnings = await MemberRepository.get_warning_count(session, guild.id, user.id)
 
         if not actions:
             title = f"History for {user}"

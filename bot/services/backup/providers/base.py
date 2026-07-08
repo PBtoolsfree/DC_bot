@@ -9,9 +9,7 @@ class BackupStorageProvider(ABC):
     @abstractmethod
     async def save_backup(self, backup_id: int, payload: dict) -> str:
         """Save the payload and return an identifier/URI."""
-        pass
 
     @abstractmethod
     async def load_backup(self, identifier: str) -> dict:
         """Load a backup payload from its identifier/URI."""
-        pass

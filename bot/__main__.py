@@ -1,7 +1,7 @@
 """Allow running the bot package with `python -m bot`."""
 
-from bot.main import main
-
 import asyncio
+
+from bot.main import main
 
 asyncio.run(main())

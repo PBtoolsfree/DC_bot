@@ -5,8 +5,8 @@ from unittest.mock import MagicMock, patch
 import pytest
 from fastapi.testclient import TestClient
 
-from dashboard.backend.main import app
 from dashboard.backend.core.security import create_access_token
+from dashboard.backend.main import app
 
 client = TestClient(app)
 
@@ -26,7 +26,6 @@ async def test_callback_success(mock_get: MagicMock, mock_post: MagicMock) -> No
     # This is a unit test of the FastAPI endpoint, but since TestClient is sync,
     # we would typically use httpx.AsyncClient for FastAPI async endpoints.
     # We will test the security utilities instead.
-    pass
 
 
 def test_create_access_token() -> None:

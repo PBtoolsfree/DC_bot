@@ -23,8 +23,8 @@ class PostgresStorageProvider(BackupStorageProvider):
         stmt = select(ServerBackup).where(ServerBackup.id == backup_id)
         result = await self.session.execute(stmt)
         backup = result.scalar_one_or_none()
-        
+
         if not backup:
             raise ValueError(f"Backup {backup_id} not found.")
-            
+
         return backup.payload

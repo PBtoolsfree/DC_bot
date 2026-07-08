@@ -13,14 +13,14 @@ class MarkdownTranscriptProvider(TranscriptProvider):
 
     async def generate(self, ticket: Ticket, messages: list[TicketMessage]) -> bytes:
         """Generate Markdown structure."""
-        
+
         lines = []
         lines.append(f"# Ticket Transcript: {ticket.id}")
         lines.append(f"**Owner ID**: {ticket.owner_id}")
         lines.append(f"**Created At**: {ticket.created_at}")
         lines.append(f"**Status**: {ticket.status}")
         lines.append("\n---\n")
-        
+
         for m in messages:
             lines.append(f"### {m.author_name} ({m.author_id})")
             lines.append(f"*{m.timestamp}*")
@@ -31,5 +31,5 @@ class MarkdownTranscriptProvider(TranscriptProvider):
                 for att in m.attachments:
                     lines.append(f"- {att}")
             lines.append("\n---\n")
-            
+
         return "\n".join(lines).encode("utf-8")

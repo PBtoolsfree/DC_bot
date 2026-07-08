@@ -13,7 +13,6 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from bot.utils.constants import Emojis
 from bot.utils.embed_builder import EmbedBuilder
 from bot.utils.logger import get_logger
 
@@ -113,8 +112,7 @@ class ErrorHandler(commands.Cog):
             if original.status == 404:
                 await self._send_error(
                     interaction,
-                    "The requested resource was not found. "
-                    "It may have been deleted.",
+                    "The requested resource was not found. " "It may have been deleted.",
                 )
                 return
 
@@ -133,8 +131,7 @@ class ErrorHandler(commands.Cog):
 
         await self._send_error(
             interaction,
-            f"An unexpected error occurred. This has been logged.\n"
-            f"Error ID: `{error_id}`",
+            f"An unexpected error occurred. This has been logged.\n" f"Error ID: `{error_id}`",
         )
 
     @commands.Cog.listener()

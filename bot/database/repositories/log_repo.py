@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 import datetime
-from typing import Any, Sequence
+from collections.abc import Sequence
+from typing import Any
 
-from sqlalchemy import select, desc, or_, func, delete
+from sqlalchemy import delete, desc, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.database.models.logging import ActionLog
@@ -63,43 +64,36 @@ class LogRepository:
         stmt = select(ActionLog).where(ActionLog.guild_id == guild_id)
 
         if user_id:
-            stmt = stmt.where(
-                or_(
-                    ActionLog.executor_id == user_id,
-                    ActionLog.target_id == user_id
-                )
-            )
-            
+            stmt = stmt.where(or_(ActionLog.executor_id == user_id, ActionLog.target_id == user_id))
+
         if action_type:
             stmt = stmt.where(ActionLog.action_type == action_type)
-            
+
         if channel_id:
             stmt = stmt.where(ActionLog.channel_id == channel_id)
-            
+
         if start_date:
             stmt = stmt.where(ActionLog.created_at >= start_date)
-            
+
         if end_date:
             stmt = stmt.where(ActionLog.created_at <= end_date)
 
         stmt = stmt.order_by(desc(ActionLog.created_at)).limit(limit).offset(offset)
         result = await session.execute(stmt)
         return result.scalars().all()
-        
+
     @staticmethod
-    async def cleanup_old_logs(
-        session: AsyncSession,
-        retention_days: int
-    ) -> int:
+    async def cleanup_old_logs(session: AsyncSession, retention_days: int) -> int:
         """Delete logs older than the retention period, ignoring immutable logs.
         Returns the number of deleted rows.
         """
-        cutoff_date = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=retention_days)
-        
-        stmt = delete(ActionLog).where(
-            ActionLog.created_at < cutoff_date,
-            ActionLog.is_immutable == False
+        cutoff_date = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(
+            days=retention_days
         )
-        
+
+        stmt = delete(ActionLog).where(
+            ActionLog.created_at < cutoff_date, ActionLog.is_immutable == False
+        )
+
         result = await session.execute(stmt)
         return result.rowcount

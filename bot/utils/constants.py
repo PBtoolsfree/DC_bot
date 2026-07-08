@@ -8,42 +8,43 @@ from __future__ import annotations
 
 import discord
 
-
 # ======================================================================
 # Embed Colors (Discord color values)
 # ======================================================================
+
 
 class Colors:
     """Curated color palette for bot embeds."""
 
     # Primary actions
-    SUCCESS = discord.Color.from_rgb(87, 242, 135)       # Green
-    ERROR = discord.Color.from_rgb(237, 66, 69)          # Red
-    WARNING = discord.Color.from_rgb(254, 231, 92)       # Yellow
-    INFO = discord.Color.from_rgb(88, 101, 242)          # Blurple
-    NEUTRAL = discord.Color.from_rgb(153, 170, 181)      # Gray
+    SUCCESS = discord.Color.from_rgb(87, 242, 135)  # Green
+    ERROR = discord.Color.from_rgb(237, 66, 69)  # Red
+    WARNING = discord.Color.from_rgb(254, 231, 92)  # Yellow
+    INFO = discord.Color.from_rgb(88, 101, 242)  # Blurple
+    NEUTRAL = discord.Color.from_rgb(153, 170, 181)  # Gray
 
     # Module-specific
-    MODERATION = discord.Color.from_rgb(237, 66, 69)     # Red
-    AUTOMOD = discord.Color.from_rgb(235, 69, 158)       # Pink
-    SECURITY = discord.Color.from_rgb(194, 124, 14)      # Amber
-    LOGS = discord.Color.from_rgb(88, 101, 242)          # Blurple
-    WELCOME = discord.Color.from_rgb(87, 242, 135)       # Green
-    TICKETS = discord.Color.from_rgb(69, 79, 191)        # Indigo
-    GIVEAWAY = discord.Color.from_rgb(163, 99, 247)      # Purple
-    ANALYTICS = discord.Color.from_rgb(32, 178, 170)     # Teal
-    PREMIUM = discord.Color.from_rgb(255, 215, 0)        # Gold
+    MODERATION = discord.Color.from_rgb(237, 66, 69)  # Red
+    AUTOMOD = discord.Color.from_rgb(235, 69, 158)  # Pink
+    SECURITY = discord.Color.from_rgb(194, 124, 14)  # Amber
+    LOGS = discord.Color.from_rgb(88, 101, 242)  # Blurple
+    WELCOME = discord.Color.from_rgb(87, 242, 135)  # Green
+    TICKETS = discord.Color.from_rgb(69, 79, 191)  # Indigo
+    GIVEAWAY = discord.Color.from_rgb(163, 99, 247)  # Purple
+    ANALYTICS = discord.Color.from_rgb(32, 178, 170)  # Teal
+    PREMIUM = discord.Color.from_rgb(255, 215, 0)  # Gold
 
     # Severity levels
-    LOW = discord.Color.from_rgb(87, 242, 135)           # Green
-    MEDIUM = discord.Color.from_rgb(254, 231, 92)        # Yellow
-    HIGH = discord.Color.from_rgb(245, 165, 36)          # Orange
-    CRITICAL = discord.Color.from_rgb(237, 66, 69)       # Red
+    LOW = discord.Color.from_rgb(87, 242, 135)  # Green
+    MEDIUM = discord.Color.from_rgb(254, 231, 92)  # Yellow
+    HIGH = discord.Color.from_rgb(245, 165, 36)  # Orange
+    CRITICAL = discord.Color.from_rgb(237, 66, 69)  # Red
 
 
 # ======================================================================
 # Emojis (Unicode)
 # ======================================================================
+
 
 class Emojis:
     """Unicode emojis used in bot messages."""
@@ -99,6 +100,7 @@ class Emojis:
 # Limits
 # ======================================================================
 
+
 class Limits:
     """Discord API and application limits."""
 
@@ -125,19 +127,20 @@ class Limits:
     MAX_TIMEOUT_SECONDS = 60 * 60 * 24 * 28  # 28 days (Discord max)
 
     # Automod thresholds (defaults, configurable per guild)
-    DEFAULT_SPAM_THRESHOLD = 5        # messages per window
-    DEFAULT_SPAM_WINDOW = 5           # seconds
-    DEFAULT_MENTION_LIMIT = 5         # unique mentions per message
-    DEFAULT_CAPS_PERCENTAGE = 70      # max percentage of caps
-    DEFAULT_CAPS_MIN_LENGTH = 10      # min message length for caps check
-    DEFAULT_EMOJI_LIMIT = 10          # max emojis per message
+    DEFAULT_SPAM_THRESHOLD = 5  # messages per window
+    DEFAULT_SPAM_WINDOW = 5  # seconds
+    DEFAULT_MENTION_LIMIT = 5  # unique mentions per message
+    DEFAULT_CAPS_PERCENTAGE = 70  # max percentage of caps
+    DEFAULT_CAPS_MIN_LENGTH = 10  # min message length for caps check
+    DEFAULT_EMOJI_LIMIT = 10  # max emojis per message
     DEFAULT_RAID_JOIN_THRESHOLD = 10  # joins per window
-    DEFAULT_RAID_JOIN_WINDOW = 10     # seconds
+    DEFAULT_RAID_JOIN_WINDOW = 10  # seconds
 
 
 # ======================================================================
 # Module Names
 # ======================================================================
+
 
 class Modules:
     """Module identifiers used in GuildModuleSettings."""
@@ -160,8 +163,20 @@ class Modules:
     BACKUP = "backup"
 
     ALL: list[str] = [
-        MODERATION, AUTOMOD, SECURITY, LOGS, WELCOME,
-        VERIFICATION, TICKETS, REACTION_ROLES, GIVEAWAYS,
-        SCHEDULER, NOTIFICATIONS, ANALYTICS, AI,
-        TEMP_CHANNELS, SUGGESTIONS, BACKUP,
+        MODERATION,
+        AUTOMOD,
+        SECURITY,
+        LOGS,
+        WELCOME,
+        VERIFICATION,
+        TICKETS,
+        REACTION_ROLES,
+        GIVEAWAYS,
+        SCHEDULER,
+        NOTIFICATIONS,
+        ANALYTICS,
+        AI,
+        TEMP_CHANNELS,
+        SUGGESTIONS,
+        BACKUP,
     ]

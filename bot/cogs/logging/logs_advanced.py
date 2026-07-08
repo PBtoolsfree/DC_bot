@@ -38,7 +38,7 @@ class AdvancedLogsCog(commands.Cog):
             action="Thread Created",
             executor=thread.owner,
             channel=thread.parent,
-            color=discord.Color.green()
+            color=discord.Color.green(),
         )
         embed.add_field(name="Name", value=thread.name, inline=True)
 
@@ -53,5 +53,5 @@ class AdvancedLogsCog(commands.Cog):
                 target_id=thread.id,
                 channel=thread.parent,
                 after={"name": thread.name},
-                embed=embed
+                embed=embed,
             )

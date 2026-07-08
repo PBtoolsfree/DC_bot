@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import asyncio
 import re
 from datetime import timedelta
 from typing import TYPE_CHECKING, Literal
@@ -25,19 +24,13 @@ logger = get_logger(__name__)
 class ModerationError(Exception):
     """Base exception for moderation logic errors."""
 
-    pass
-
 
 class HierarchyError(ModerationError):
     """Raised when a hierarchy check fails."""
 
-    pass
-
 
 class BotHierarchyError(ModerationError):
     """Raised when the bot lacks hierarchy to moderate a member."""
-
-    pass
 
 
 class ModerationService:
@@ -106,9 +99,7 @@ class ModerationService:
             is_automated=is_automated,
         )
 
-        await self.logger_service.log_action(
-            session, guild, action, target, moderator
-        )
+        await self.logger_service.log_action(session, guild, action, target, moderator)
 
     async def ban_member(
         self,
@@ -137,13 +128,15 @@ class ModerationService:
             moderator_id=moderator.id,
             action_type=ModActionType.BAN,
             reason=reason,
-            details=f"Deleted {delete_message_days} days of messages" if delete_message_days > 0 else None,
+            details=(
+                f"Deleted {delete_message_days} days of messages"
+                if delete_message_days > 0
+                else None
+            ),
             is_automated=is_automated,
         )
 
-        await self.logger_service.log_action(
-            session, guild, action, target, moderator
-        )
+        await self.logger_service.log_action(session, guild, action, target, moderator)
 
     async def unban_member(
         self,
@@ -165,9 +158,7 @@ class ModerationService:
             reason=reason,
         )
 
-        await self.logger_service.log_action(
-            session, guild, action, user, moderator
-        )
+        await self.logger_service.log_action(session, guild, action, user, moderator)
 
     async def softban_member(
         self,
@@ -199,9 +190,7 @@ class ModerationService:
             details=f"Deleted {delete_message_days} days of messages",
         )
 
-        await self.logger_service.log_action(
-            session, guild, action, target, moderator
-        )
+        await self.logger_service.log_action(session, guild, action, target, moderator)
 
     async def timeout_member(
         self,
@@ -234,9 +223,7 @@ class ModerationService:
             is_automated=is_automated,
         )
 
-        await self.logger_service.log_action(
-            session, guild, action, target, moderator
-        )
+        await self.logger_service.log_action(session, guild, action, target, moderator)
 
     async def untimeout_member(
         self,
@@ -264,9 +251,7 @@ class ModerationService:
             reason=reason,
         )
 
-        await self.logger_service.log_action(
-            session, guild, action, target, moderator
-        )
+        await self.logger_service.log_action(session, guild, action, target, moderator)
 
     async def set_nickname(
         self,
@@ -295,9 +280,7 @@ class ModerationService:
             details=f"Nickname changed from '{old_nick}' to '{new_nick}'",
         )
 
-        await self.logger_service.log_action(
-            session, guild, action, target, moderator
-        )
+        await self.logger_service.log_action(session, guild, action, target, moderator)
 
     async def purge_messages(
         self,
@@ -397,9 +380,7 @@ class ModerationService:
         if duration_seconds > 21600:
             raise ModerationError("Slowmode cannot exceed 6 hours.")
 
-        await channel.edit(
-            slowmode_delay=duration_seconds, reason=f"By {moderator}: {reason}"
-        )
+        await channel.edit(slowmode_delay=duration_seconds, reason=f"By {moderator}: {reason}")
 
         action = await MemberRepository.log_action(
             session=session,
@@ -446,9 +427,7 @@ class ModerationService:
             details=f"Locked #{channel.name}",
         )
 
-        await self.logger_service.log_action(
-            session, guild, action, f"#{channel.name}", moderator
-        )
+        await self.logger_service.log_action(session, guild, action, f"#{channel.name}", moderator)
 
     async def unlock_channel(
         self,
@@ -480,6 +459,4 @@ class ModerationService:
             details=f"Unlocked #{channel.name}",
         )
 
-        await self.logger_service.log_action(
-            session, guild, action, f"#{channel.name}", moderator
-        )
+        await self.logger_service.log_action(session, guild, action, f"#{channel.name}", moderator)

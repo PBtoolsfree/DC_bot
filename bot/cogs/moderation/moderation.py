@@ -6,8 +6,7 @@ Delegates business logic and database interactions to the Service layer.
 
 from __future__ import annotations
 
-import asyncio
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING
 
 import discord
 from discord import app_commands
@@ -16,12 +15,16 @@ from discord.ext import commands
 from bot.database.models.member import ModActionType
 from bot.services.history_service import HistoryService
 from bot.services.logging_service import LoggingService
-from bot.services.moderation_service import BotHierarchyError, HierarchyError, ModerationError, ModerationService
+from bot.services.moderation_service import (
+    BotHierarchyError,
+    HierarchyError,
+    ModerationError,
+    ModerationService,
+)
 from bot.services.punishment_service import PunishmentService
 from bot.utils.embed_builder import EmbedBuilder
 from bot.utils.logger import get_logger
 from bot.utils.paginator import PaginatorView
-from bot.utils.permissions import check_bot_hierarchy, check_hierarchy
 from bot.utils.time_parser import DurationParseError, parse_duration
 
 if TYPE_CHECKING:
@@ -41,15 +44,12 @@ class ModerationCog(commands.Cog, name="Moderation"):
         self.history_service = HistoryService()
         self.logging_service = LoggingService(bot)
 
-    async def _handle_mod_error(
-        self, interaction: discord.Interaction, error: Exception
-    ) -> None:
+    async def _handle_mod_error(self, interaction: discord.Interaction, error: Exception) -> None:
         """Handle specific moderation errors and display friendly messages."""
-        if isinstance(error, (HierarchyError, BotHierarchyError, ModerationError, DurationParseError)):
-            embed = EmbedBuilder.error(
-                title="Moderation Failed",
-                description=str(error)
-            )
+        if isinstance(
+            error, (HierarchyError, BotHierarchyError, ModerationError, DurationParseError)
+        ):
+            embed = EmbedBuilder.error(title="Moderation Failed", description=str(error))
             if interaction.response.is_done():
                 await interaction.followup.send(embed=embed, ephemeral=True)
             else:
@@ -63,10 +63,7 @@ class ModerationCog(commands.Cog, name="Moderation"):
     # ==================================================================
 
     @app_commands.command(name="kick", description="Kick a member from the server.")
-    @app_commands.describe(
-        target="The member to kick",
-        reason="Reason for the kick"
-    )
+    @app_commands.describe(target="The member to kick", reason="Reason for the kick")
     @app_commands.checks.has_permissions(kick_members=True)
     async def kick(
         self,
@@ -84,10 +81,9 @@ class ModerationCog(commands.Cog, name="Moderation"):
                     session, interaction.guild, target, interaction.user, reason
                 )
                 await session.commit()
-            
+
             embed = EmbedBuilder.success(
-                title="Member Kicked",
-                description=f"Successfully kicked {target.mention}."
+                title="Member Kicked", description=f"Successfully kicked {target.mention}."
             )
             await interaction.followup.send(embed=embed)
         except Exception as e:
@@ -97,7 +93,7 @@ class ModerationCog(commands.Cog, name="Moderation"):
     @app_commands.describe(
         target="The user to ban",
         reason="Reason for the ban",
-        delete_days="Number of days of messages to delete (0-7)"
+        delete_days="Number of days of messages to delete (0-7)",
     )
     @app_commands.checks.has_permissions(ban_members=True)
     async def ban(
@@ -116,27 +112,28 @@ class ModerationCog(commands.Cog, name="Moderation"):
 
         try:
             async with self.bot.db.session() as session:
-                # Type ignoring Literal restriction for the dynamically passed int, 
+                # Type ignoring Literal restriction for the dynamically passed int,
                 # discord.py Range validator ensures it's 0-7.
                 await self.mod_service.ban_member(
-                    session, interaction.guild, member_target, interaction.user, 
-                    reason, delete_days, False  # type: ignore
+                    session,
+                    interaction.guild,
+                    member_target,
+                    interaction.user,
+                    reason,
+                    delete_days,
+                    False,  # type: ignore
                 )
                 await session.commit()
-            
+
             embed = EmbedBuilder.success(
-                title="Member Banned",
-                description=f"Successfully banned {target.mention}."
+                title="Member Banned", description=f"Successfully banned {target.mention}."
             )
             await interaction.followup.send(embed=embed)
         except Exception as e:
             await self._handle_mod_error(interaction, e)
 
     @app_commands.command(name="unban", description="Unban a user from the server.")
-    @app_commands.describe(
-        user_id="The ID of the user to unban",
-        reason="Reason for the unban"
-    )
+    @app_commands.describe(user_id="The ID of the user to unban", reason="Reason for the unban")
     @app_commands.checks.has_permissions(ban_members=True)
     async def unban(
         self,
@@ -151,36 +148,36 @@ class ModerationCog(commands.Cog, name="Moderation"):
         try:
             target_id = int(user_id)
             target = await self.bot.fetch_user(target_id)
-            
+
             async with self.bot.db.session() as session:
                 await self.mod_service.unban_member(
                     session, interaction.guild, target, interaction.user, reason
                 )
                 await session.commit()
-                
+
             embed = EmbedBuilder.success(
-                title="User Unbanned",
-                description=f"Successfully unbanned {target.mention}."
+                title="User Unbanned", description=f"Successfully unbanned {target.mention}."
             )
             await interaction.followup.send(embed=embed)
         except ValueError:
             await interaction.followup.send(
-                embed=EmbedBuilder.error(description="Invalid user ID provided."),
-                ephemeral=True
+                embed=EmbedBuilder.error(description="Invalid user ID provided."), ephemeral=True
             )
         except discord.NotFound:
             await interaction.followup.send(
                 embed=EmbedBuilder.error(description="User not found (or not banned)."),
-                ephemeral=True
+                ephemeral=True,
             )
         except Exception as e:
             await self._handle_mod_error(interaction, e)
 
-    @app_commands.command(name="softban", description="Ban and unban a member to clear their recent messages.")
+    @app_commands.command(
+        name="softban", description="Ban and unban a member to clear their recent messages."
+    )
     @app_commands.describe(
         target="The member to softban",
         reason="Reason for the softban",
-        delete_days="Number of days of messages to delete (1-7)"
+        delete_days="Number of days of messages to delete (1-7)",
     )
     @app_commands.checks.has_permissions(ban_members=True, kick_members=True)
     async def softban(
@@ -197,14 +194,18 @@ class ModerationCog(commands.Cog, name="Moderation"):
         try:
             async with self.bot.db.session() as session:
                 await self.mod_service.softban_member(
-                    session, interaction.guild, target, interaction.user, 
-                    reason, delete_days  # type: ignore
+                    session,
+                    interaction.guild,
+                    target,
+                    interaction.user,
+                    reason,
+                    delete_days,  # type: ignore
                 )
                 await session.commit()
-            
+
             embed = EmbedBuilder.success(
                 title="Member Softbanned",
-                description=f"Successfully softbanned {target.mention} (Messages cleared)."
+                description=f"Successfully softbanned {target.mention} (Messages cleared).",
             )
             await interaction.followup.send(embed=embed)
         except Exception as e:
@@ -214,7 +215,7 @@ class ModerationCog(commands.Cog, name="Moderation"):
     @app_commands.describe(
         target="The member to timeout",
         duration="Duration (e.g. 10m, 2h, 1d)",
-        reason="Reason for the timeout"
+        reason="Reason for the timeout",
     )
     @app_commands.checks.has_permissions(moderate_members=True)
     async def timeout(
@@ -230,19 +231,18 @@ class ModerationCog(commands.Cog, name="Moderation"):
 
         try:
             time_delta = parse_duration(duration)
-            
+
             async with self.bot.db.session() as session:
                 await self.mod_service.timeout_member(
-                    session, interaction.guild, target, interaction.user, 
-                    time_delta, reason
+                    session, interaction.guild, target, interaction.user, time_delta, reason
                 )
                 await session.commit()
-            
+
             from bot.utils.time_parser import format_duration
-            
+
             embed = EmbedBuilder.success(
                 title="Member Timed Out",
-                description=f"Successfully timed out {target.mention} for {format_duration(time_delta)}."
+                description=f"Successfully timed out {target.mention} for {format_duration(time_delta)}.",
             )
             await interaction.followup.send(embed=embed)
         except Exception as e:
@@ -250,8 +250,7 @@ class ModerationCog(commands.Cog, name="Moderation"):
 
     @app_commands.command(name="untimeout", description="Remove a timeout from a member.")
     @app_commands.describe(
-        target="The member to remove the timeout from",
-        reason="Reason for untimeout"
+        target="The member to remove the timeout from", reason="Reason for untimeout"
     )
     @app_commands.checks.has_permissions(moderate_members=True)
     async def untimeout(
@@ -270,10 +269,10 @@ class ModerationCog(commands.Cog, name="Moderation"):
                     session, interaction.guild, target, interaction.user, reason
                 )
                 await session.commit()
-            
+
             embed = EmbedBuilder.success(
                 title="Timeout Removed",
-                description=f"Successfully removed timeout from {target.mention}."
+                description=f"Successfully removed timeout from {target.mention}.",
             )
             await interaction.followup.send(embed=embed)
         except Exception as e:
@@ -284,10 +283,7 @@ class ModerationCog(commands.Cog, name="Moderation"):
     # ==================================================================
 
     @app_commands.command(name="warn", description="Issue a formal warning to a member.")
-    @app_commands.describe(
-        target="The member to warn",
-        reason="Reason for the warning"
-    )
+    @app_commands.describe(target="The member to warn", reason="Reason for the warning")
     @app_commands.checks.has_permissions(manage_messages=True)
     async def warn(
         self,
@@ -305,15 +301,12 @@ class ModerationCog(commands.Cog, name="Moderation"):
                     session, interaction.guild, target, interaction.user, reason
                 )
                 await session.commit()
-            
+
             desc = f"Successfully warned {target.mention} (Warning ID: `{warning.id}`)."
             if punishment_msg:
                 desc += f"\n\n**Auto-Punishment Applied:** {punishment_msg}"
-                
-            embed = EmbedBuilder.success(
-                title="Member Warned",
-                description=desc
-            )
+
+            embed = EmbedBuilder.success(title="Member Warned", description=desc)
             await interaction.followup.send(embed=embed)
         except Exception as e:
             await self._handle_mod_error(interaction, e)
@@ -321,7 +314,7 @@ class ModerationCog(commands.Cog, name="Moderation"):
     @app_commands.command(name="warnings", description="View warnings for a member.")
     @app_commands.describe(
         target="The member to view warnings for",
-        active_only="Show only active warnings (default True)"
+        active_only="Show only active warnings (default True)",
     )
     @app_commands.checks.has_permissions(manage_messages=True)
     async def warnings(
@@ -338,14 +331,16 @@ class ModerationCog(commands.Cog, name="Moderation"):
             embeds = await self.history_service.get_warnings_embeds(
                 session, interaction.guild, target, active_only
             )
-            
+
         if len(embeds) == 1:
             await interaction.followup.send(embed=embeds[0])
         else:
             view = PaginatorView(embeds, interaction.user)
             await interaction.followup.send(embed=embeds[0], view=view)
 
-    @app_commands.command(name="clearwarnings", description="Clear all active warnings for a member.")
+    @app_commands.command(
+        name="clearwarnings", description="Clear all active warnings for a member."
+    )
     @app_commands.describe(
         target="The member to clear warnings for",
     )
@@ -364,10 +359,10 @@ class ModerationCog(commands.Cog, name="Moderation"):
                 session, interaction.guild, target, interaction.user
             )
             await session.commit()
-            
+
         embed = EmbedBuilder.success(
             title="Warnings Cleared",
-            description=f"Cleared {count} active warnings for {target.mention}."
+            description=f"Cleared {count} active warnings for {target.mention}.",
         )
         await interaction.followup.send(embed=embed)
 
@@ -399,13 +394,15 @@ class ModerationCog(commands.Cog, name="Moderation"):
     ) -> None:
         """Purge command."""
         assert interaction.guild is not None
-        
+
         # We don't defer because purge takes time and followup.send creates a message
         # we might want to delete. We'll send an ephemeral response instead at the end.
         if bots_only and humans_only:
             await interaction.response.send_message(
-                embed=EmbedBuilder.error(description="Cannot specify both bots_only and humans_only."),
-                ephemeral=True
+                embed=EmbedBuilder.error(
+                    description="Cannot specify both bots_only and humans_only."
+                ),
+                ephemeral=True,
             )
             return
 
@@ -416,7 +413,7 @@ class ModerationCog(commands.Cog, name="Moderation"):
         if not isinstance(channel, (discord.TextChannel, discord.Thread, discord.VoiceChannel)):
             await interaction.followup.send(
                 embed=EmbedBuilder.error(description="Cannot purge in this channel type."),
-                ephemeral=True
+                ephemeral=True,
             )
             return
 
@@ -438,17 +435,18 @@ class ModerationCog(commands.Cog, name="Moderation"):
                 await session.commit()
 
             embed = EmbedBuilder.success(
-                title="Purge Complete",
-                description=f"Successfully deleted {deleted} messages."
+                title="Purge Complete", description=f"Successfully deleted {deleted} messages."
             )
             await interaction.followup.send(embed=embed)
         except Exception as e:
             await self._handle_mod_error(interaction, e)
 
-    @app_commands.command(name="slowmode", description="Set the slowmode delay for the current channel.")
+    @app_commands.command(
+        name="slowmode", description="Set the slowmode delay for the current channel."
+    )
     @app_commands.describe(
         duration="Delay duration (e.g. 5s, 1m) or 0 to disable",
-        reason="Reason for setting slowmode"
+        reason="Reason for setting slowmode",
     )
     @app_commands.checks.has_permissions(manage_channels=True)
     async def slowmode(
@@ -465,7 +463,7 @@ class ModerationCog(commands.Cog, name="Moderation"):
         if not isinstance(channel, (discord.TextChannel, discord.Thread, discord.VoiceChannel)):
             await interaction.followup.send(
                 embed=EmbedBuilder.error(description="Cannot set slowmode in this channel type."),
-                ephemeral=True
+                ephemeral=True,
             )
             return
 
@@ -480,11 +478,11 @@ class ModerationCog(commands.Cog, name="Moderation"):
                     session, channel, interaction.user, seconds, reason
                 )
                 await session.commit()
-                
+
             status = "disabled" if seconds == 0 else f"set to {seconds} seconds"
             embed = EmbedBuilder.success(
                 title="Slowmode Updated",
-                description=f"Slowmode in {channel.mention} has been {status}."
+                description=f"Slowmode in {channel.mention} has been {status}.",
             )
             await interaction.followup.send(embed=embed)
         except Exception as e:
@@ -494,7 +492,7 @@ class ModerationCog(commands.Cog, name="Moderation"):
     @app_commands.describe(
         target="The member to rename",
         nickname="The new nickname (leave empty to reset)",
-        reason="Reason for nickname change"
+        reason="Reason for nickname change",
     )
     @app_commands.checks.has_permissions(manage_nicknames=True)
     async def nick(
@@ -514,17 +512,19 @@ class ModerationCog(commands.Cog, name="Moderation"):
                     session, interaction.guild, target, interaction.user, nickname, reason
                 )
                 await session.commit()
-                
+
             status = f"set to '{nickname}'" if nickname else "reset"
             embed = EmbedBuilder.success(
-                title="Nickname Updated",
-                description=f"{target.mention}'s nickname was {status}."
+                title="Nickname Updated", description=f"{target.mention}'s nickname was {status}."
             )
             await interaction.followup.send(embed=embed)
         except Exception as e:
             await self._handle_mod_error(interaction, e)
 
-    @app_commands.command(name="lock", description="Lock the current channel (prevents @everyone from sending messages).")
+    @app_commands.command(
+        name="lock",
+        description="Lock the current channel (prevents @everyone from sending messages).",
+    )
     @app_commands.describe(reason="Reason for lockdown")
     @app_commands.checks.has_permissions(manage_channels=True)
     async def lock(
@@ -540,20 +540,18 @@ class ModerationCog(commands.Cog, name="Moderation"):
         if not isinstance(channel, (discord.TextChannel, discord.VoiceChannel)):
             await interaction.followup.send(
                 embed=EmbedBuilder.error(description="Cannot lock this channel type."),
-                ephemeral=True
+                ephemeral=True,
             )
             return
 
         try:
             async with self.bot.db.session() as session:
-                await self.mod_service.lock_channel(
-                    session, channel, interaction.user, reason
-                )
+                await self.mod_service.lock_channel(session, channel, interaction.user, reason)
                 await session.commit()
-                
+
             embed = EmbedBuilder.warning(
                 title="🔒 Channel Locked",
-                description=f"This channel has been locked down.\n**Reason:** {reason}"
+                description=f"This channel has been locked down.\n**Reason:** {reason}",
             )
             await interaction.followup.send(embed=embed)
         except Exception as e:
@@ -575,20 +573,18 @@ class ModerationCog(commands.Cog, name="Moderation"):
         if not isinstance(channel, (discord.TextChannel, discord.VoiceChannel)):
             await interaction.followup.send(
                 embed=EmbedBuilder.error(description="Cannot unlock this channel type."),
-                ephemeral=True
+                ephemeral=True,
             )
             return
 
         try:
             async with self.bot.db.session() as session:
-                await self.mod_service.unlock_channel(
-                    session, channel, interaction.user, reason
-                )
+                await self.mod_service.unlock_channel(session, channel, interaction.user, reason)
                 await session.commit()
-                
+
             embed = EmbedBuilder.success(
                 title="🔓 Channel Unlocked",
-                description=f"This channel has been unlocked.\n**Reason:** {reason}"
+                description=f"This channel has been unlocked.\n**Reason:** {reason}",
             )
             await interaction.followup.send(embed=embed)
         except Exception as e:
@@ -600,8 +596,7 @@ class ModerationCog(commands.Cog, name="Moderation"):
 
     @app_commands.command(name="history", description="View moderation history for a user.")
     @app_commands.describe(
-        user="The user to view history for",
-        action_type="Filter by specific action type"
+        user="The user to view history for", action_type="Filter by specific action type"
     )
     @app_commands.checks.has_permissions(manage_messages=True)
     async def history(
@@ -618,17 +613,17 @@ class ModerationCog(commands.Cog, name="Moderation"):
             embeds = await self.history_service.get_user_history_embeds(
                 session, interaction.guild, user, action_type
             )
-            
+
         if len(embeds) == 1:
             await interaction.followup.send(embed=embeds[0])
         else:
             view = PaginatorView(embeds, interaction.user)
             await interaction.followup.send(embed=embeds[0], view=view)
 
-    @app_commands.command(name="modlogs", description="Set or disable the moderation logging channel.")
-    @app_commands.describe(
-        channel="The channel to send mod logs to (leave empty to disable)"
+    @app_commands.command(
+        name="modlogs", description="Set or disable the moderation logging channel."
     )
+    @app_commands.describe(channel="The channel to send mod logs to (leave empty to disable)")
     @app_commands.checks.has_permissions(administrator=True)
     async def modlogs(
         self,
@@ -644,16 +639,16 @@ class ModerationCog(commands.Cog, name="Moderation"):
                 session, interaction.guild.id, channel.id if channel else None
             )
             await session.commit()
-            
+
         if channel:
             embed = EmbedBuilder.success(
                 title="Mod Logs Configured",
-                description=f"Moderation logs will now be sent to {channel.mention}."
+                description=f"Moderation logs will now be sent to {channel.mention}.",
             )
         else:
             embed = EmbedBuilder.info(
                 title="Mod Logs Disabled",
-                description="Moderation logs will no longer be sent to any channel."
+                description="Moderation logs will no longer be sent to any channel.",
             )
-            
+
         await interaction.followup.send(embed=embed)

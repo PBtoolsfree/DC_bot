@@ -8,7 +8,7 @@ Models:
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime
 from enum import Enum
 
 from sqlalchemy import BigInteger, Boolean, DateTime, ForeignKey, Index, String, Text
@@ -53,9 +53,7 @@ class MemberData(Base, TimestampMixin):
     """
 
     __tablename__ = "member_data"
-    __table_args__ = (
-        Index("ix_member_data_guild_user", "guild_id", "user_id", unique=True),
-    )
+    __table_args__ = (Index("ix_member_data_guild_user", "guild_id", "user_id", unique=True),)
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     guild_id: Mapped[int] = mapped_column(
@@ -139,9 +137,7 @@ class Warning(Base, TimestampMixin):
     """
 
     __tablename__ = "warnings"
-    __table_args__ = (
-        Index("ix_warnings_guild_user", "guild_id", "user_id"),
-    )
+    __table_args__ = (Index("ix_warnings_guild_user", "guild_id", "user_id"),)
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     guild_id: Mapped[int] = mapped_column(

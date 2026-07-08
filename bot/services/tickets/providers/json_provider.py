@@ -16,7 +16,7 @@ class JSONTranscriptProvider(TranscriptProvider):
 
     async def generate(self, ticket: Ticket, messages: list[TicketMessage]) -> bytes:
         """Generate JSON structure."""
-        
+
         data: dict[str, Any] = {
             "ticket": {
                 "id": ticket.id,
@@ -25,7 +25,7 @@ class JSONTranscriptProvider(TranscriptProvider):
                 "owner_id": ticket.owner_id,
                 "created_at": ticket.created_at.isoformat(),
                 "closed_at": ticket.closed_at.isoformat() if ticket.closed_at else None,
-                "status": ticket.status
+                "status": ticket.status,
             },
             "messages": [
                 {
@@ -34,10 +34,10 @@ class JSONTranscriptProvider(TranscriptProvider):
                     "author_name": m.author_name,
                     "content": m.content,
                     "attachments": m.attachments,
-                    "timestamp": m.timestamp.isoformat()
+                    "timestamp": m.timestamp.isoformat(),
                 }
                 for m in messages
-            ]
+            ],
         }
-        
+
         return json.dumps(data, indent=2).encode("utf-8")

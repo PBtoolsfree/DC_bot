@@ -17,14 +17,10 @@ Usage:
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING
 
 import discord
 
 from bot.utils.constants import Colors, Emojis
-
-if TYPE_CHECKING:
-    pass
 
 
 class EmbedBuilder:
@@ -232,14 +228,14 @@ class EmbedBuilder:
             title=action,
             color=color,
         )
-        
+
         if executor:
             embed.add_field(name="Executor", value=str(executor), inline=True)
         if target:
             embed.add_field(name="Target", value=str(target), inline=True)
         if channel:
             embed.add_field(name="Channel", value=channel.mention, inline=True)
-            
+
         return embed
 
     @classmethod

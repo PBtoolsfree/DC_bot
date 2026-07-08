@@ -14,7 +14,7 @@ class TicketRepository:
         stmt = select(Ticket).where(Ticket.channel_id == channel_id)
         result = await session.execute(stmt)
         return result.scalar_one_or_none()
-        
+
     @staticmethod
     async def get_ticket_by_id(session: AsyncSession, ticket_id: int) -> Ticket | None:
         stmt = select(Ticket).where(Ticket.id == ticket_id)
@@ -26,7 +26,7 @@ class TicketRepository:
         stmt = select(TicketCategory).where(TicketCategory.id == category_id)
         result = await session.execute(stmt)
         return result.scalar_one_or_none()
-        
+
     @staticmethod
     async def get_panel(session: AsyncSession, panel_id: int) -> TicketPanel | None:
         stmt = select(TicketPanel).where(TicketPanel.id == panel_id)

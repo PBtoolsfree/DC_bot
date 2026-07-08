@@ -1,8 +1,6 @@
 """Anonymous Ticket Relay Service."""
 
 import logging
-from typing import Any
-import discord
 
 logger = logging.getLogger(__name__)
 

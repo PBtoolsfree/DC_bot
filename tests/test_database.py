@@ -5,11 +5,9 @@ from __future__ import annotations
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from bot.database.models.guild import GuildConfig, GuildModuleSettings
-from bot.database.models.member import MemberData, ModAction, ModActionType, Warning
+from bot.database.models.member import ModActionType
 from bot.database.repositories.guild_repo import GuildRepository
 from bot.database.repositories.member_repo import MemberRepository
-
 
 # ======================================================================
 # Guild Repository Tests
@@ -56,9 +54,7 @@ class TestGuildRepository:
     @pytest.mark.asyncio
     async def test_update_config(self, db_session: AsyncSession) -> None:
         """Should update specific fields on a guild config."""
-        await GuildRepository.get_or_create_config(
-            db_session, guild_id=123456789
-        )
+        await GuildRepository.get_or_create_config(db_session, guild_id=123456789)
         await db_session.flush()
 
         updated = await GuildRepository.update_config(
@@ -75,9 +71,7 @@ class TestGuildRepository:
         assert updated.locale == "en-GB"
 
     @pytest.mark.asyncio
-    async def test_update_nonexistent_config_returns_none(
-        self, db_session: AsyncSession
-    ) -> None:
+    async def test_update_nonexistent_config_returns_none(self, db_session: AsyncSession) -> None:
         """Updating a non-existent guild should return None."""
         result = await GuildRepository.update_config(
             db_session, guild_id=999999999, welcome_enabled=True
@@ -87,9 +81,7 @@ class TestGuildRepository:
     @pytest.mark.asyncio
     async def test_delete_config(self, db_session: AsyncSession) -> None:
         """Should delete a guild config."""
-        await GuildRepository.get_or_create_config(
-            db_session, guild_id=123456789
-        )
+        await GuildRepository.get_or_create_config(db_session, guild_id=123456789)
         await db_session.flush()
 
         deleted = await GuildRepository.delete_config(db_session, guild_id=123456789)
@@ -105,13 +97,9 @@ class TestGuildRepository:
         assert result is False
 
     @pytest.mark.asyncio
-    async def test_module_settings_get_or_create(
-        self, db_session: AsyncSession
-    ) -> None:
+    async def test_module_settings_get_or_create(self, db_session: AsyncSession) -> None:
         """Should create module settings with defaults."""
-        await GuildRepository.get_or_create_config(
-            db_session, guild_id=123456789
-        )
+        await GuildRepository.get_or_create_config(db_session, guild_id=123456789)
         await db_session.flush()
 
         settings = await GuildRepository.get_or_create_module_settings(
@@ -130,9 +118,7 @@ class TestGuildRepository:
     @pytest.mark.asyncio
     async def test_update_module_settings(self, db_session: AsyncSession) -> None:
         """Should update module enabled state and config."""
-        await GuildRepository.get_or_create_config(
-            db_session, guild_id=123456789
-        )
+        await GuildRepository.get_or_create_config(db_session, guild_id=123456789)
         await db_session.flush()
 
         await GuildRepository.get_or_create_module_settings(
@@ -155,9 +141,7 @@ class TestGuildRepository:
     @pytest.mark.asyncio
     async def test_is_premium_default_false(self, db_session: AsyncSession) -> None:
         """Non-premium guild should return False."""
-        await GuildRepository.get_or_create_config(
-            db_session, guild_id=123456789
-        )
+        await GuildRepository.get_or_create_config(db_session, guild_id=123456789)
         await db_session.flush()
 
         assert await GuildRepository.is_premium(db_session, 123456789) is False
@@ -175,9 +159,7 @@ class TestMemberRepository:
     async def test_create_member(self, db_session: AsyncSession) -> None:
         """Should create member data with defaults."""
         # Need a guild first (for FK)
-        await GuildRepository.get_or_create_config(
-            db_session, guild_id=123456789
-        )
+        await GuildRepository.get_or_create_config(db_session, guild_id=123456789)
         await db_session.flush()
 
         member = await MemberRepository.get_or_create_member(
@@ -199,9 +181,7 @@ class TestMemberRepository:
     @pytest.mark.asyncio
     async def test_add_warning(self, db_session: AsyncSession) -> None:
         """Should create a warning and increment total_warnings."""
-        await GuildRepository.get_or_create_config(
-            db_session, guild_id=123456789
-        )
+        await GuildRepository.get_or_create_config(db_session, guild_id=123456789)
         await db_session.flush()
 
         warning = await MemberRepository.add_warning(
@@ -229,38 +209,24 @@ class TestMemberRepository:
     @pytest.mark.asyncio
     async def test_multiple_warnings(self, db_session: AsyncSession) -> None:
         """Adding multiple warnings should increment total correctly."""
-        await GuildRepository.get_or_create_config(
-            db_session, guild_id=123456789
-        )
+        await GuildRepository.get_or_create_config(db_session, guild_id=123456789)
         await db_session.flush()
 
-        await MemberRepository.add_warning(
-            db_session, 123456789, 222222222, 333333333, "Warning 1"
-        )
-        await MemberRepository.add_warning(
-            db_session, 123456789, 222222222, 333333333, "Warning 2"
-        )
-        await MemberRepository.add_warning(
-            db_session, 123456789, 222222222, 333333333, "Warning 3"
-        )
+        await MemberRepository.add_warning(db_session, 123456789, 222222222, 333333333, "Warning 1")
+        await MemberRepository.add_warning(db_session, 123456789, 222222222, 333333333, "Warning 2")
+        await MemberRepository.add_warning(db_session, 123456789, 222222222, 333333333, "Warning 3")
 
-        count = await MemberRepository.get_warning_count(
-            db_session, 123456789, 222222222
-        )
+        count = await MemberRepository.get_warning_count(db_session, 123456789, 222222222)
         assert count == 3
 
-        member = await MemberRepository.get_member(
-            db_session, 123456789, 222222222
-        )
+        member = await MemberRepository.get_member(db_session, 123456789, 222222222)
         assert member is not None
         assert member.total_warnings == 3
 
     @pytest.mark.asyncio
     async def test_pardon_warning(self, db_session: AsyncSession) -> None:
         """Should deactivate a warning and decrement total."""
-        await GuildRepository.get_or_create_config(
-            db_session, guild_id=123456789
-        )
+        await GuildRepository.get_or_create_config(db_session, guild_id=123456789)
         await db_session.flush()
 
         warning = await MemberRepository.add_warning(
@@ -277,18 +243,14 @@ class TestMemberRepository:
         assert pardoned.pardoned_by == 333333333
         assert pardoned.pardoned_at is not None
 
-        member = await MemberRepository.get_member(
-            db_session, 123456789, 222222222
-        )
+        member = await MemberRepository.get_member(db_session, 123456789, 222222222)
         assert member is not None
         assert member.total_warnings == 0
 
     @pytest.mark.asyncio
     async def test_clear_all_warnings(self, db_session: AsyncSession) -> None:
         """Should clear all active warnings for a member."""
-        await GuildRepository.get_or_create_config(
-            db_session, guild_id=123456789
-        )
+        await GuildRepository.get_or_create_config(db_session, guild_id=123456789)
         await db_session.flush()
 
         for i in range(5):
@@ -302,25 +264,19 @@ class TestMemberRepository:
         )
         assert cleared == 5
 
-        count = await MemberRepository.get_warning_count(
-            db_session, 123456789, 222222222
-        )
+        count = await MemberRepository.get_warning_count(db_session, 123456789, 222222222)
         assert count == 0
 
     @pytest.mark.asyncio
     async def test_get_active_warnings_only(self, db_session: AsyncSession) -> None:
         """Should return only active warnings when active_only=True."""
-        await GuildRepository.get_or_create_config(
-            db_session, guild_id=123456789
-        )
+        await GuildRepository.get_or_create_config(db_session, guild_id=123456789)
         await db_session.flush()
 
         w1 = await MemberRepository.add_warning(
             db_session, 123456789, 222222222, 333333333, "Active 1"
         )
-        await MemberRepository.add_warning(
-            db_session, 123456789, 222222222, 333333333, "Active 2"
-        )
+        await MemberRepository.add_warning(db_session, 123456789, 222222222, 333333333, "Active 2")
         await db_session.flush()
 
         # Pardon one
@@ -340,9 +296,7 @@ class TestMemberRepository:
     @pytest.mark.asyncio
     async def test_log_mod_action(self, db_session: AsyncSession) -> None:
         """Should log a moderation action."""
-        await GuildRepository.get_or_create_config(
-            db_session, guild_id=123456789
-        )
+        await GuildRepository.get_or_create_config(db_session, guild_id=123456789)
         await db_session.flush()
 
         action = await MemberRepository.log_action(
@@ -364,9 +318,7 @@ class TestMemberRepository:
     @pytest.mark.asyncio
     async def test_log_automated_action(self, db_session: AsyncSession) -> None:
         """Should log an automated moderation action."""
-        await GuildRepository.get_or_create_config(
-            db_session, guild_id=123456789
-        )
+        await GuildRepository.get_or_create_config(db_session, guild_id=123456789)
         await db_session.flush()
 
         action = await MemberRepository.log_action(
@@ -387,9 +339,7 @@ class TestMemberRepository:
     @pytest.mark.asyncio
     async def test_get_actions_with_filters(self, db_session: AsyncSession) -> None:
         """Should filter mod actions by user and type."""
-        await GuildRepository.get_or_create_config(
-            db_session, guild_id=123456789
-        )
+        await GuildRepository.get_or_create_config(db_session, guild_id=123456789)
         await db_session.flush()
 
         # Log various actions
@@ -408,9 +358,7 @@ class TestMemberRepository:
         await db_session.flush()
 
         # Filter by user
-        user_actions = await MemberRepository.get_actions(
-            db_session, 123456789, user_id=222222222
-        )
+        user_actions = await MemberRepository.get_actions(db_session, 123456789, user_id=222222222)
         assert len(user_actions) == 3
 
         # Filter by type
@@ -426,9 +374,7 @@ class TestMemberRepository:
     @pytest.mark.asyncio
     async def test_get_action_count(self, db_session: AsyncSession) -> None:
         """Should count mod actions correctly."""
-        await GuildRepository.get_or_create_config(
-            db_session, guild_id=123456789
-        )
+        await GuildRepository.get_or_create_config(db_session, guild_id=123456789)
         await db_session.flush()
 
         await MemberRepository.log_action(
@@ -450,14 +396,10 @@ class TestMemberRepository:
     @pytest.mark.asyncio
     async def test_increment_messages(self, db_session: AsyncSession) -> None:
         """Should increment message count for existing member."""
-        await GuildRepository.get_or_create_config(
-            db_session, guild_id=123456789
-        )
+        await GuildRepository.get_or_create_config(db_session, guild_id=123456789)
         await db_session.flush()
 
-        await MemberRepository.get_or_create_member(
-            db_session, 123456789, 222222222
-        )
+        await MemberRepository.get_or_create_member(db_session, 123456789, 222222222)
         await db_session.flush()
 
         await MemberRepository.increment_messages(db_session, 123456789, 222222222)

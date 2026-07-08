@@ -4,7 +4,7 @@ import os
 from typing import Any
 
 import httpx
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 
@@ -47,28 +47,30 @@ async def callback(code: str) -> dict[str, Any]:
         "code": code,
         "redirect_uri": DISCORD_REDIRECT_URI,
     }
-    
+
     headers = {"Content-Type": "application/x-www-form-urlencoded"}
-    
+
     async with httpx.AsyncClient() as client:
         # 1. Exchange Code for Token
-        token_res = await client.post("https://discord.com/api/oauth2/token", data=data, headers=headers)
+        token_res = await client.post(
+            "https://discord.com/api/oauth2/token", data=data, headers=headers
+        )
         if token_res.status_code != 200:
             raise HTTPException(status_code=400, detail="Invalid OAuth code.")
-            
+
         token_data = token_res.json()
         discord_access_token = token_data.get("access_token")
-        
+
         # 2. Get User Info
         user_res = await client.get(
             f"{DISCORD_API_URL}/users/@me",
-            headers={"Authorization": f"Bearer {discord_access_token}"}
+            headers={"Authorization": f"Bearer {discord_access_token}"},
         )
         if user_res.status_code != 200:
             raise HTTPException(status_code=400, detail="Failed to fetch user data.")
-            
+
         user_data = user_res.json()
-        
+
         # 3. Create Dashboard JWT
         jwt_payload = {
             "sub": str(user_data["id"]),
@@ -76,9 +78,9 @@ async def callback(code: str) -> dict[str, Any]:
             "avatar": user_data.get("avatar"),
             "discord_access_token": discord_access_token,
         }
-        
+
         jwt_token = create_access_token(data=jwt_payload)
-        
+
         return {"access_token": jwt_token, "token_type": "bearer"}
 
 
@@ -88,5 +90,5 @@ async def get_me(current_user: dict[str, Any] = Depends(get_current_user)) -> di
     return {
         "id": current_user["id"],
         "username": current_user["username"],
-        "avatar": current_user["avatar"]
+        "avatar": current_user["avatar"],
     }

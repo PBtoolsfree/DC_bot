@@ -73,17 +73,13 @@ class PunishmentService:
             reason,
         )
 
-        await self.logger_service.log_action(
-            session, guild, action, target, moderator
-        )
+        await self.logger_service.log_action(session, guild, action, target, moderator)
 
         # Flush to ensure the warning is written to DB and readable by count
         await session.flush()
 
         # Evaluate auto-punishments
-        active_warnings = await MemberRepository.get_warning_count(
-            session, guild.id, target.id
-        )
+        active_warnings = await MemberRepository.get_warning_count(session, guild.id, target.id)
 
         punishment_msg = await self._evaluate_thresholds(
             session, guild, target, active_warnings, reason
@@ -114,7 +110,7 @@ class PunishmentService:
         settings = await GuildRepository.get_or_create_module_settings(
             session, guild.id, "moderation"
         )
-        
+
         # Structure: {"warn_thresholds": {"3": {"action": "timeout", "duration": 3600}, "5": {"action": "kick"}}}
         thresholds = settings.config.get("warn_thresholds", {})
         count_str = str(warning_count)
@@ -126,7 +122,9 @@ class PunishmentService:
         action = punishment.get("action")
         duration = punishment.get("duration", 3600)  # Default 1h timeout
 
-        reason = f"Auto-punishment (Reached {warning_count} warnings) - Last reason: {original_reason}"
+        reason = (
+            f"Auto-punishment (Reached {warning_count} warnings) - Last reason: {original_reason}"
+        )
         bot_user = self.bot.user
 
         try:
@@ -141,15 +139,16 @@ class PunishmentService:
                     is_automated=True,
                 )
                 from bot.utils.time_parser import format_seconds
+
                 return f"Member auto-timed out for {format_seconds(duration)}."
 
-            elif action == "kick":
+            if action == "kick":
                 await self.mod_service.kick_member(
                     session, guild, target, bot_user, reason, is_automated=True
                 )
                 return "Member auto-kicked."
 
-            elif action == "ban":
+            if action == "ban":
                 await self.mod_service.ban_member(
                     session, guild, target, bot_user, reason, is_automated=True
                 )
@@ -163,7 +162,7 @@ class PunishmentService:
                 action=action,
                 error=str(e),
             )
-            return f"Failed to execute auto-punishment '{action}': {str(e)}"
+            return f"Failed to execute auto-punishment '{action}': {e!s}"
 
         return None
 
@@ -183,9 +182,7 @@ class PunishmentService:
         Returns:
             True if pardoned successfully, False if not found or already pardoned.
         """
-        warning = await MemberRepository.pardon_warning(
-            session, warning_id, moderator.id
-        )
+        warning = await MemberRepository.pardon_warning(session, warning_id, moderator.id)
         return warning is not None
 
     async def clear_warnings(
@@ -206,7 +203,5 @@ class PunishmentService:
         Returns:
             The number of warnings cleared.
         """
-        count = await MemberRepository.clear_warnings(
-            session, guild.id, target.id, moderator.id
-        )
+        count = await MemberRepository.clear_warnings(session, guild.id, target.id, moderator.id)
         return count

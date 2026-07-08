@@ -32,7 +32,7 @@ class AutoModerationService:
     def __init__(self, bot: ManagementBot, redis: RedisService) -> None:
         self.bot = bot
         self.redis = redis
-        
+
         self.spam_service = SpamService(redis)
         self.link_service = LinkService()
         self.profanity_service = ProfanityService()
@@ -40,11 +40,11 @@ class AutoModerationService:
 
     async def _get_settings(self, session: AsyncSession, guild_id: int) -> AutoModSettings | None:
         """Fetch and parse AutoMod settings for a guild.
-        
+
         Uses Redis to cache the parsed settings to avoid database hits on every message.
         """
         cache_key = f"cache:automod_config:{guild_id}"
-        
+
         # 1. Check Redis Cache
         cached_data = await self.redis.get_json(cache_key)
         if cached_data is not None:
@@ -54,7 +54,7 @@ class AutoModerationService:
 
         # 2. Fetch from Database
         db_settings = await GuildRepository.get_module_settings(session, guild_id, "automod")
-        
+
         if not db_settings:
             # Cache the "not enabled" state for 60 seconds
             await self.redis.set_json(cache_key, {"enabled": False}, ex=60)
@@ -62,9 +62,9 @@ class AutoModerationService:
 
         # 3. Cache and Return
         await self.redis.set_json(
-            cache_key, 
-            {"enabled": db_settings.enabled, "config": db_settings.config}, 
-            ex=300  # 5 minute cache TTL
+            cache_key,
+            {"enabled": db_settings.enabled, "config": db_settings.config},
+            ex=300,  # 5 minute cache TTL
         )
 
         if not db_settings.enabled:
@@ -74,7 +74,7 @@ class AutoModerationService:
 
     async def process_message(self, session: AsyncSession, message: discord.Message) -> bool:
         """Process a message through all enabled AutoMod filters.
-        
+
         Returns True if the message was processed and ALLOWED (or ignored),
         and False if a violation was triggered.
         """
@@ -86,14 +86,14 @@ class AutoModerationService:
             return True
 
         # Process through filters in order of severity/speed
-        
+
         # 1. Profanity & Content (Fastest, regex/string matching)
         violation_rule = await self.profanity_service.check_message(message, settings)
-        
+
         # 2. Link Filtering (Parsing domains)
         if not violation_rule:
             violation_rule = await self.link_service.check_message(message, settings)
-            
+
         # 3. Spam Detection (Requires Redis calls)
         if not violation_rule:
             violation_rule = await self.spam_service.check_message(message, settings)
@@ -106,10 +106,10 @@ class AutoModerationService:
                 user_id=message.author.id,
                 rule=violation_rule,
             )
-            
+
             # Record stat in redis
             await self.redis.incr(f"stats:automod:violations:{message.guild.id}:{violation_rule}")
-            
+
             await self.violation_service.handle_violation(
                 session, message, violation_rule, settings
             )

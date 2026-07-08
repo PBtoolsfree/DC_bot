@@ -2,7 +2,6 @@
 
 import datetime
 import re
-from typing import Any
 
 import discord
 
@@ -21,7 +20,7 @@ class RiskEngineService:
         - Join velocity/raid mode (Placeholder for caching integration) (+25)
         """
         score = 0
-        
+
         # 1. Account Age
         now = datetime.datetime.now(datetime.timezone.utc)
         age_days = (now - member.created_at).days
@@ -29,15 +28,15 @@ class RiskEngineService:
             score += 40
         elif age_days < 7:
             score += 20
-            
+
         # 2. Avatar Presence
         if not member.avatar:
             score += 20
-            
+
         # 3. Username pattern (common bot patterns)
         if re.match(r"^[a-zA-Z]+\d{4,8}$", member.name):
             score += 15
-            
+
         # Ensure it stays within bounds
         return max(0, min(100, score))
 
@@ -45,7 +44,7 @@ class RiskEngineService:
     def select_provider(risk_score: int, high_threshold: int) -> str:
         """Select the appropriate provider based on the risk score."""
         if risk_score >= high_threshold:
-            return "image" # Image is the hardest CAPTCHA
+            return "image"  # Image is the hardest CAPTCHA
         if risk_score >= (high_threshold // 2):
             return "math"
-        return "button" # Lowest risk gets simple button
+        return "button"  # Lowest risk gets simple button

@@ -1,8 +1,8 @@
 """Archive Service."""
 
-from sqlalchemy import select, delete
-from sqlalchemy.ext.asyncio import AsyncSession
 import discord
+from sqlalchemy import delete
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.database.models.tickets import Ticket, TicketMessage
 from bot.services.tickets.ticket_service import TicketService
@@ -14,15 +14,12 @@ class ArchiveService:
 
     @staticmethod
     async def archive_ticket(
-        session: AsyncSession, 
-        guild: discord.Guild, 
-        ticket: Ticket, 
-        operator_id: int
+        session: AsyncSession, guild: discord.Guild, ticket: Ticket, operator_id: int
     ) -> bool:
         """Closes the channel, generates transcripts, and purges raw messages."""
         if ticket.status in ["archived", "deleted"]:
             return False
-            
+
         # 1. State transition
         success = await TicketService.change_status(session, ticket, "archived", operator_id)
         if not success:
@@ -34,20 +31,20 @@ class ArchiveService:
         t_service = TranscriptService()
         await t_service.generate_transcript(session, ticket, "html")
         await t_service.generate_transcript(session, ticket, "json")
-        
+
         # 3. Purge Raw TicketMessages (Hybrid Storage)
         stmt = delete(TicketMessage).where(TicketMessage.ticket_id == ticket.id)
         await session.execute(stmt)
-        
+
         # 4. Delete the Discord Channel
         if ticket.channel_id:
             channel = guild.get_channel(ticket.channel_id)
             if channel:
                 try:
-                    await channel.delete(reason="Ticket Archived") # type: ignore
+                    await channel.delete(reason="Ticket Archived")  # type: ignore
                 except discord.HTTPException:
                     pass
             ticket.channel_id = None
-            
+
         await session.flush()
         return True

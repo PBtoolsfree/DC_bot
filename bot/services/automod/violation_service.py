@@ -47,7 +47,7 @@ class ViolationService:
         # We need the most strict escalation rule that applies.
         # Find the maximum time window we need to query for
         max_window = max(rule.time_window_seconds for rule in settings.escalation_rules)
-        
+
         # Get violation count in that window
         recent_violations = await MemberRepository.get_action_count(
             session, guild_id, user_id, seconds_ago=max_window, is_automated=True
@@ -58,9 +58,7 @@ class ViolationService:
 
         # Sort escalation rules by violation count descending to apply the highest tier
         sorted_escalations = sorted(
-            settings.escalation_rules, 
-            key=lambda r: r.violation_count, 
-            reverse=True
+            settings.escalation_rules, key=lambda r: r.violation_count, reverse=True
         )
 
         for rule in sorted_escalations:
@@ -68,13 +66,27 @@ class ViolationService:
             # We recalculate for the specific rule's time window if it's smaller
             if rule.time_window_seconds < max_window:
                 count_in_window = await MemberRepository.get_action_count(
-                    session, guild_id, user_id, seconds_ago=rule.time_window_seconds, is_automated=True
+                    session,
+                    guild_id,
+                    user_id,
+                    seconds_ago=rule.time_window_seconds,
+                    is_automated=True,
                 )
                 if count_in_window >= rule.violation_count:
-                    logger.info("automod_escalated", user_id=user_id, count=count_in_window, rule=rule.violation_count)
+                    logger.info(
+                        "automod_escalated",
+                        user_id=user_id,
+                        count=count_in_window,
+                        rule=rule.violation_count,
+                    )
                     return rule.actions
             elif recent_violations >= rule.violation_count:
-                logger.info("automod_escalated", user_id=user_id, count=recent_violations, rule=rule.violation_count)
+                logger.info(
+                    "automod_escalated",
+                    user_id=user_id,
+                    count=recent_violations,
+                    rule=rule.violation_count,
+                )
                 return rule.actions
 
         return default_actions
@@ -93,7 +105,7 @@ class ViolationService:
         guild = message.guild
         target = message.author
         bot_user = guild.me
-        
+
         # Get the rule configuration
         rule_config: RuleConfig = getattr(settings, rule_name)
         if not rule_config.actions:
@@ -106,7 +118,7 @@ class ViolationService:
         )
 
         reason = f"AutoMod violation: {rule_name}"
-        
+
         for action in actions_to_execute:
             try:
                 if action.type == AutoModAction.DELETE:
@@ -115,7 +127,7 @@ class ViolationService:
                         await message.delete()
                     except discord.NotFound:
                         pass
-                        
+
                 elif action.type == AutoModAction.WARN:
                     # We log it manually to maintain context of 'is_automated'
                     mod_action = await MemberRepository.log_action(
@@ -130,7 +142,7 @@ class ViolationService:
                     await self.mod_service.logger_service.log_action(
                         session, guild, mod_action, target, bot_user
                     )
-                    
+
                     if action.message:
                         try:
                             await target.send(f"⚠️ **Warning in {guild.name}**: {action.message}")
@@ -142,34 +154,38 @@ class ViolationService:
                     await self.mod_service.timeout_member(
                         session, guild, target, bot_user, duration, reason, is_automated=True
                     )
-                    
+
                 elif action.type == AutoModAction.KICK:
                     await self.mod_service.kick_member(
                         session, guild, target, bot_user, reason, is_automated=True
                     )
-                    
+
                 elif action.type == AutoModAction.BAN:
                     await self.mod_service.ban_member(
                         session, guild, target, bot_user, reason, is_automated=True
                     )
-                    
+
                 elif action.type == AutoModAction.SOFTBAN:
-                    await self.mod_service.softban_member(
-                        session, guild, target, bot_user, reason
-                    )
-                    
+                    await self.mod_service.softban_member(session, guild, target, bot_user, reason)
+
                 elif action.type == AutoModAction.LOCK_CHANNEL:
                     if isinstance(message.channel, (discord.TextChannel, discord.VoiceChannel)):
                         await self.mod_service.lock_channel(
                             session, message.channel, bot_user, reason
                         )
-                        
+
                 elif action.type == AutoModAction.SLOWMODE:
-                    if isinstance(message.channel, (discord.TextChannel, discord.VoiceChannel, discord.Thread)):
+                    if isinstance(
+                        message.channel, (discord.TextChannel, discord.VoiceChannel, discord.Thread)
+                    ):
                         await self.mod_service.set_slowmode(
-                            session, message.channel, bot_user, action.duration_seconds or 10, reason
+                            session,
+                            message.channel,
+                            bot_user,
+                            action.duration_seconds or 10,
+                            reason,
                         )
-                        
+
                 elif action.type == AutoModAction.DM_USER:
                     try:
                         await target.send(action.message or f"You violated a rule in {guild.name}.")
@@ -194,8 +210,5 @@ class ViolationService:
 
             except Exception as e:
                 logger.error(
-                    "automod_action_failed", 
-                    action=action.type, 
-                    user_id=target.id, 
-                    error=str(e)
+                    "automod_action_failed", action=action.type, user_id=target.id, error=str(e)
                 )

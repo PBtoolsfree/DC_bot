@@ -18,7 +18,7 @@ async def get_settings(
     guild_id: int,
     module_name: str,
     current_user: dict[str, Any] = Depends(get_current_user),
-    session: AsyncSession = Depends(get_db)
+    session: AsyncSession = Depends(get_db),
 ) -> dict[str, Any]:
     """Fetch configuration for a specific module."""
     # RBAC check (simplified: must have specific permission for that module)
@@ -30,7 +30,7 @@ async def get_settings(
     settings = await GuildRepository.get_module_settings(session, guild_id, module_name)
     if not settings:
         return {"enabled": False, "config": {}}
-        
+
     return {"enabled": settings.enabled, "config": settings.config}
 
 
@@ -40,7 +40,7 @@ async def update_settings(
     module_name: str,
     payload: dict[str, Any],
     current_user: dict[str, Any] = Depends(get_current_user),
-    session: AsyncSession = Depends(get_db)
+    session: AsyncSession = Depends(get_db),
 ) -> dict[str, Any]:
     """Update configuration for a specific module."""
     perm_name = f"manage_{module_name}" if module_name != "automod" else "manage_automod"
@@ -52,8 +52,8 @@ async def update_settings(
     config = payload.get("config", {})
 
     await GuildRepository.upsert_module_settings(session, guild_id, module_name, enabled, config)
-    
+
     # Audit log creation should happen here in a real implementation
     # e.g., AuditService.log_dashboard_action(...)
-    
+
     return {"status": "success"}

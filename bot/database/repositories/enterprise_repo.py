@@ -4,9 +4,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from bot.database.models.backup import ServerBackup
-from bot.database.models.welcome import WelcomeSettings, AutoRoleSettings
-from bot.database.models.roles import ReactionRolePanel, ReactionRoleGroup, ReactionRoleItem
-from bot.database.models.xp import XPSettings, UserXP, XPReward
+from bot.database.models.welcome import WelcomeSettings
+from bot.database.models.xp import UserXP, XPSettings
 
 
 class EnterpriseRepository:
@@ -29,5 +28,10 @@ class EnterpriseRepository:
 
     @staticmethod
     async def get_top_xp(session: AsyncSession, guild_id: int, limit: int = 10) -> list[UserXP]:
-        stmt = select(UserXP).where(UserXP.guild_id == guild_id).order_by(UserXP.xp.desc()).limit(limit)
+        stmt = (
+            select(UserXP)
+            .where(UserXP.guild_id == guild_id)
+            .order_by(UserXP.xp.desc())
+            .limit(limit)
+        )
         return list((await session.execute(stmt)).scalars().all())

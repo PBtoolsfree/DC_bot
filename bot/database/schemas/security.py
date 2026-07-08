@@ -12,13 +12,21 @@ SecurityAction = Literal["warn", "timeout", "kick", "ban", "lock_channel", "remo
 
 class WhitelistConfig(BaseModel):
     """Whitelist configuration for bypassing security rules."""
-    users: list[int] = Field(default_factory=list, description="User IDs exempt from all security checks")
-    roles: list[int] = Field(default_factory=list, description="Role IDs exempt from all security checks")
-    bots: list[int] = Field(default_factory=list, description="Bot IDs exempt from anti-bot and anti-nuke")
+
+    users: list[int] = Field(
+        default_factory=list, description="User IDs exempt from all security checks"
+    )
+    roles: list[int] = Field(
+        default_factory=list, description="Role IDs exempt from all security checks"
+    )
+    bots: list[int] = Field(
+        default_factory=list, description="Bot IDs exempt from anti-bot and anti-nuke"
+    )
 
 
 class AntiNukeRule(BaseModel):
     """Configuration for a specific Anti-Nuke rule."""
+
     enabled: bool = False
     threshold: int = Field(default=3, ge=1, description="Actions allowed within the time window")
     time_window_seconds: int = Field(default=10, ge=1, description="Time window for threshold")
@@ -27,6 +35,7 @@ class AntiNukeRule(BaseModel):
 
 class AntiNukeConfig(BaseModel):
     """Configuration for Anti-Nuke systems."""
+
     enabled: bool = False
     channel_create: AntiNukeRule = Field(default_factory=AntiNukeRule)
     channel_delete: AntiNukeRule = Field(default_factory=AntiNukeRule)
@@ -46,6 +55,7 @@ class AntiNukeConfig(BaseModel):
 
 class AntiRaidRule(BaseModel):
     """Configuration for a specific Anti-Raid rule."""
+
     enabled: bool = False
     threshold: int = Field(default=10, ge=1)
     time_window_seconds: int = Field(default=10, ge=1)
@@ -54,6 +64,7 @@ class AntiRaidRule(BaseModel):
 
 class AntiRaidConfig(BaseModel):
     """Configuration for Anti-Raid systems."""
+
     enabled: bool = False
     mass_join: AntiRaidRule = Field(default_factory=AntiRaidRule)
     invite_spam: AntiRaidRule = Field(default_factory=AntiRaidRule)
@@ -63,15 +74,19 @@ class AntiRaidConfig(BaseModel):
 
 class SimulationConfig(BaseModel):
     """Configuration for simulation mode."""
+
     enabled: bool = False
-    log_channel_id: int | None = Field(default=None, description="Channel ID to send simulation alerts")
+    log_channel_id: int | None = Field(
+        default=None, description="Channel ID to send simulation alerts"
+    )
 
 
 class SecuritySettings(BaseModel):
     """Master configuration schema for the Security module."""
+
     enabled: bool = False
     log_channel_id: int | None = Field(default=None, description="Where to log incidents")
-    
+
     whitelist: WhitelistConfig = Field(default_factory=WhitelistConfig)
     anti_nuke: AntiNukeConfig = Field(default_factory=AntiNukeConfig)
     anti_raid: AntiRaidConfig = Field(default_factory=AntiRaidConfig)
