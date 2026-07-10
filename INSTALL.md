@@ -13,7 +13,7 @@ Tested on Ubuntu 22.04 and 24.04 LTS. Perfect for Oracle Cloud Always Free insta
 
 ### Command
 ```bash
-curl -fsSL https://raw.githubusercontent.com/your-org/discord-management-platform/main/install.sh | sudo bash
+curl -fLSS https://raw.githubusercontent.com/PBtoolsfree/DC_bot/main/install.sh | sudo bash
 ```
 Follow the interactive prompts to configure your bot, database, and domain.
 
