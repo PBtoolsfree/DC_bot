@@ -267,10 +267,10 @@ log "Python dependencies installed."
 
 # ── Frontend Build ──────────────────────────────────────────
 if [[ -d "$INSTALL_DIR/dashboard/frontend" ]] && [[ -f "$INSTALL_DIR/dashboard/frontend/package.json" ]]; then
-    log "Building Next.js dashboard..."
+    log "Building Next.js dashboard (this may take a few minutes)..."
     cd "$INSTALL_DIR/dashboard/frontend"
-    sudo -u "$BOT_USER" npm ci --silent 2>/dev/null || sudo -u "$BOT_USER" npm install --silent
-    sudo -u "$BOT_USER" npm run build --silent 2>/dev/null || warn "Frontend build skipped (no build script found)."
+    sudo -u "$BOT_USER" npm install || warn "npm install failed, continuing anyway..."
+    sudo -u "$BOT_USER" npm run build || warn "Frontend build failed or skipped."
     cd "$INSTALL_DIR"
 else
     info "No frontend package.json found. Skipping frontend build."
