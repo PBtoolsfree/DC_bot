@@ -12,8 +12,8 @@
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-org/discord-management-platform.git
-cd discord-management-platform
+git clone https://github.com/PBtoolsfree/DC_bot.git
+cd DC_bot
 
 # 2. Generate secrets
 python -c "import secrets; print(secrets.token_hex(32))"

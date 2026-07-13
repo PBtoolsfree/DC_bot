@@ -35,10 +35,10 @@ If you are using Docker and need to manually restore just the database:
 tar -xzf backup.tar.gz database.sql
 
 # 2. Copy it to the postgres container
-docker cp database.sql discord-management-platform-postgres-1:/tmp/database.sql
+docker cp database.sql dc_bot-postgres-1:/tmp/database.sql
 
 # 3. Drop and recreate database, then import
-docker exec -it discord-management-platform-postgres-1 bash -c "
+docker exec -it dc_bot-postgres-1 bash -c "
   dropdb -U postgres discord_bot && 
   createdb -U postgres discord_bot -O discord_bot && 
   psql -U discord_bot discord_bot < /tmp/database.sql

@@ -13,7 +13,7 @@ Tested on Ubuntu 22.04 and 24.04 LTS. Perfect for Oracle Cloud Always Free insta
 
 ### Command
 ```bash
-curl -fLSS https://raw.githubusercontent.com/PBtoolsfree/DC_bot/main/install.sh | sudo bash
+curl -fsSL https://raw.githubusercontent.com/PBtoolsfree/DC_bot/main/install.sh | sudo bash
 ```
 Follow the interactive prompts to configure your bot, database, and domain.
 
@@ -24,8 +24,8 @@ Follow the interactive prompts to configure your bot, database, and domain.
 If you prefer containerized deployment, see [DOCKER.md](DOCKER.md) for detailed instructions.
 
 ```bash
-git clone https://github.com/your-org/discord-management-platform.git
-cd discord-management-platform
+git clone https://github.com/PBtoolsfree/DC_bot.git
+cd DC_bot
 cp .env.production .env
 # Edit .env with your secrets
 docker compose up -d
@@ -52,7 +52,7 @@ If you want to set up everything manually:
 
 3.  **Project Setup:**
     ```bash
-    git clone https://github.com/your-org/discord-management-platform.git /opt/discord-bot
+    git clone https://github.com/PBtoolsfree/DC_bot.git /opt/discord-bot
     cd /opt/discord-bot
     python3 -m venv venv
     source venv/bin/activate

@@ -8,7 +8,7 @@
 #   chmod +x install.sh && sudo ./install.sh
 #
 # Or remote:
-#   curl -fsSL https://raw.githubusercontent.com/P8toolsfree/DC_bot/main/install.sh | sudo bash
+#   curl -fsSL https://raw.githubusercontent.com/PBtoolsfree/DC_bot/main/install.sh | sudo bash
 # ============================================================
 
 set -euo pipefail
@@ -48,7 +48,7 @@ log "Detected: $PRETTY_NAME"
 # ── Configuration Variables ─────────────────────────────────
 INSTALL_DIR="/opt/discord-bot"
 BOT_USER="discordbot"
-REPO_URL="https://github.com/P8toolsfree/DC_bot.git"
+REPO_URL="https://github.com/PBtoolsfree/DC_bot.git"
 PYTHON_VERSION="3.10"
 NODE_VERSION="20"
 

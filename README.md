@@ -25,7 +25,7 @@ A production-grade, enterprise-ready Discord server management platform. Built w
 Deploy the entire platform with a single command on a fresh Ubuntu server:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/your-org/discord-management-platform/main/install.sh | sudo bash
+curl -fsSL https://raw.githubusercontent.com/PBtoolsfree/DC_bot/main/install.sh | sudo bash
 ```
 
 See [INSTALL.md](INSTALL.md) for detailed installation instructions.

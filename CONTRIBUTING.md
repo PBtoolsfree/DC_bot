@@ -13,8 +13,8 @@ Thank you for your interest in contributing to the Enterprise Discord Management
 
 1.  **Fork and Clone:**
     ```bash
-    git clone https://github.com/YOUR_USERNAME/discord-management-platform.git
-    cd discord-management-platform
+    git clone https://github.com/YOUR_USERNAME/DC_bot.git
+    cd DC_bot
     ```
 
 2.  **Virtual Environment:**

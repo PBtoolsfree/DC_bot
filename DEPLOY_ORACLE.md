@@ -35,7 +35,7 @@ ssh -i path/to/private_key ubuntu@<YOUR_PUBLIC_IP>
 The installer automatically detects the low RAM environment and configures swap space and database tuning.
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/your-org/discord-management-platform/main/install.sh | sudo bash
+curl -fsSL https://raw.githubusercontent.com/PBtoolsfree/DC_bot/main/install.sh | sudo bash
 ```
 
 ### What the Installer Optimizes for Oracle Cloud:

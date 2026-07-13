@@ -1,6 +1,6 @@
 [Unit]
 Description=Discord Dashboard API (FastAPI/Uvicorn)
-Documentation=https://github.com/your-org/discord-management-platform
+Documentation=https://github.com/PBtoolsfree/DC_bot
 After=network.target postgresql.service redis.service
 Requires=postgresql.service redis.service
 

@@ -10,8 +10,8 @@ The platform includes full Docker support via multi-stage Dockerfiles and `docke
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/discord-management-platform.git
-cd discord-management-platform
+git clone https://github.com/PBtoolsfree/DC_bot.git
+cd DC_bot
 
 # Generate secure secrets and configure .env
 cp .env.production .env
