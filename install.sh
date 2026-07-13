@@ -459,7 +459,7 @@ SERVICE
 
 systemctl daemon-reload
 systemctl enable discord-bot discord-dashboard discord-frontend
-systemctl start discord-bot discord-dashboard discord-frontend
+systemctl restart discord-bot discord-dashboard discord-frontend
 log "Systemd services created and started."
 
 # ── Nginx Configuration ────────────────────────────────────
