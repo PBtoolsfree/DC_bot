@@ -249,9 +249,10 @@ if [[ -d "$INSTALL_DIR" ]]; then
     warn "Directory $INSTALL_DIR already exists. Pulling latest..."
     cd "$INSTALL_DIR"
     sudo -u "$BOT_USER" git pull || true
+    sudo -u "$BOT_USER" git submodule update --init --recursive || true
 else
     log "Cloning repository..."
-    git clone "$REPO_URL" "$INSTALL_DIR"
+    git clone --recurse-submodules "$REPO_URL" "$INSTALL_DIR"
     chown -R "$BOT_USER":"$BOT_USER" "$INSTALL_DIR"
 fi
 
@@ -419,9 +420,37 @@ SyslogIdentifier=discord-dashboard
 WantedBy=multi-user.target
 SERVICE
 
+cat > /etc/systemd/system/discord-frontend.service <<SERVICE
+[Unit]
+Description=Discord Dashboard Frontend (Next.js)
+After=network.target
+
+[Service]
+Type=simple
+User=${BOT_USER}
+Group=${BOT_USER}
+WorkingDirectory=${INSTALL_DIR}/dashboard/frontend
+Environment="NODE_ENV=production"
+ExecStart=$(command -v npm) run start
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+LimitNOFILE=65536
+MemoryMax=512M
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=discord-frontend
+
+[Install]
+WantedBy=multi-user.target
+SERVICE
+
 systemctl daemon-reload
-systemctl enable discord-bot discord-dashboard
-systemctl start discord-bot discord-dashboard
+systemctl enable discord-bot discord-dashboard discord-frontend
+systemctl start discord-bot discord-dashboard discord-frontend
 log "Systemd services created and started."
 
 # ── Nginx Configuration ────────────────────────────────────
@@ -442,6 +471,15 @@ server {
     add_header X-XSS-Protection "1; mode=block" always;
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
     add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+
+    # Frontend
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
 
     # API
     location /api/ {
