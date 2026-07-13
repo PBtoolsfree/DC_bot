@@ -53,24 +53,20 @@ PYTHON_VERSION="3.10"
 NODE_VERSION="20"
 
 # ── Interactive Prompts ─────────────────────────────────────
-# Force stdin to be the terminal to prevent reading the script itself
-if [[ ! -t 0 ]]; then
-    exec < /dev/tty
-fi
 
 header "Configuration"
 
-read -rp "$(echo -e "${CYAN}Enter Discord Bot Token: ${NC}")" DISCORD_TOKEN
+read -rp "$(echo -e "${CYAN}Enter Discord Bot Token: ${NC}")" DISCORD_TOKEN < /dev/tty
 while [[ -z "$DISCORD_TOKEN" ]]; do
     error "Bot token is required."
-    read -rp "$(echo -e "${CYAN}Enter Discord Bot Token: ${NC}")" DISCORD_TOKEN
+    read -rp "$(echo -e "${CYAN}Enter Discord Bot Token: ${NC}")" DISCORD_TOKEN < /dev/tty
 done
 
-read -rp "$(echo -e "${CYAN}Enter Discord OAuth2 Client ID: ${NC}")" OAUTH2_CLIENT_ID
-read -rp "$(echo -e "${CYAN}Enter Discord OAuth2 Client Secret: ${NC}")" OAUTH2_CLIENT_SECRET
-read -rp "$(echo -e "${CYAN}Enter Bot Owner Discord ID(s) (comma-separated): ${NC}")" OWNER_IDS
-read -rp "$(echo -e "${CYAN}Enter your domain name (e.g. bot.example.com): ${NC}")" DOMAIN_NAME
-read -rp "$(echo -e "${CYAN}Enter email for SSL certificates: ${NC}")" SSL_EMAIL
+read -rp "$(echo -e "${CYAN}Enter Discord OAuth2 Client ID: ${NC}")" OAUTH2_CLIENT_ID < /dev/tty
+read -rp "$(echo -e "${CYAN}Enter Discord OAuth2 Client Secret: ${NC}")" OAUTH2_CLIENT_SECRET < /dev/tty
+read -rp "$(echo -e "${CYAN}Enter Bot Owner Discord ID(s) (comma-separated): ${NC}")" OWNER_IDS < /dev/tty
+read -rp "$(echo -e "${CYAN}Enter your domain name (e.g. bot.example.com): ${NC}")" DOMAIN_NAME < /dev/tty
+read -rp "$(echo -e "${CYAN}Enter email for SSL certificates: ${NC}")" SSL_EMAIL < /dev/tty
 
 # Auto-generate secrets
 DB_PASSWORD=$(openssl rand -hex 24)
@@ -86,11 +82,11 @@ echo ""
 echo -e "${CYAN}Installation Mode:${NC}"
 echo "  1) Native (recommended for Oracle Always Free — lower RAM)"
 echo "  2) Docker Compose"
-read -rp "$(echo -e "${CYAN}Select [1/2]: ${NC}")" INSTALL_MODE
+read -rp "$(echo -e "${CYAN}Select [1/2]: ${NC}")" INSTALL_MODE < /dev/tty
 INSTALL_MODE=${INSTALL_MODE:-1}
 
 USE_SSL="y"
-read -rp "$(echo -e "${CYAN}Install SSL with Certbot? [Y/n]: ${NC}")" USE_SSL
+read -rp "$(echo -e "${CYAN}Install SSL with Certbot? [Y/n]: ${NC}")" USE_SSL < /dev/tty
 USE_SSL=${USE_SSL:-y}
 
 echo ""
@@ -101,7 +97,7 @@ echo -e "  Mode:     $([ "$INSTALL_MODE" = "1" ] && echo "Native" || echo "Docke
 echo -e "  SSL:      ${USE_SSL}"
 echo -e "${BOLD}═══════════════════════════════════════${NC}"
 echo ""
-read -rp "$(echo -e "${YELLOW}Proceed with installation? [Y/n]: ${NC}")" CONFIRM
+read -rp "$(echo -e "${YELLOW}Proceed with installation? [Y/n]: ${NC}")" CONFIRM < /dev/tty
 CONFIRM=${CONFIRM:-y}
 if [[ "${CONFIRM,,}" != "y" ]]; then
     error "Installation cancelled."
