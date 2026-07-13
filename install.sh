@@ -53,6 +53,11 @@ PYTHON_VERSION="3.10"
 NODE_VERSION="20"
 
 # ── Interactive Prompts ─────────────────────────────────────
+# Force stdin to be the terminal to prevent reading the script itself
+if [[ ! -t 0 ]]; then
+    exec < /dev/tty
+fi
+
 header "Configuration"
 
 read -rp "$(echo -e "${CYAN}Enter Discord Bot Token: ${NC}")" DISCORD_TOKEN
