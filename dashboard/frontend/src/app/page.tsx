@@ -10,7 +10,7 @@ export default function LandingPage() {
         </div>
         <nav>
           <a
-            href="http://localhost:8000/api/v1/auth/login" // Adjust to backend URL
+            href="/api/v1/auth/login" // Adjust to backend URL
             className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90"
           >
             Login with Discord
@@ -28,7 +28,7 @@ export default function LandingPage() {
           </p>
           <div className="flex justify-center">
             <a
-              href="http://localhost:8000/api/v1/auth/login"
+              href="/api/v1/auth/login"
               className="inline-flex h-11 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90"
             >
               Get Started
