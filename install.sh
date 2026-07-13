@@ -248,6 +248,9 @@ fi
 if [[ -d "$INSTALL_DIR" ]]; then
     warn "Directory $INSTALL_DIR already exists. Pulling latest..."
     cd "$INSTALL_DIR"
+    sudo -u "$BOT_USER" git fetch --all
+    sudo -u "$BOT_USER" git reset --hard origin/main
+    sudo -u "$BOT_USER" git clean -fd
     sudo -u "$BOT_USER" git pull || true
     sudo -u "$BOT_USER" git submodule update --init --recursive || true
 else
