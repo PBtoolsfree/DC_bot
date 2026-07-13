@@ -195,7 +195,9 @@ header "Database Setup"
 
 log "Configuring PostgreSQL..."
 sudo -u postgres psql -c "CREATE USER discord_bot WITH PASSWORD '${DB_PASSWORD}';" 2>/dev/null || true
+sudo -u postgres psql -c "ALTER USER discord_bot WITH PASSWORD '${DB_PASSWORD}';" 2>/dev/null || true
 sudo -u postgres psql -c "CREATE DATABASE discord_bot OWNER discord_bot;" 2>/dev/null || true
+sudo -u postgres psql -c "ALTER DATABASE discord_bot OWNER TO discord_bot;" 2>/dev/null || true
 sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE discord_bot TO discord_bot;" 2>/dev/null || true
 
 # Tuning for low-memory Oracle VMs
