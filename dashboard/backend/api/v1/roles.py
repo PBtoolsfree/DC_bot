@@ -23,7 +23,8 @@ async def list_role_groups(
 ) -> list[ReactionRoleGroupSchema]:
     """Fetch all reaction role groups for a guild."""
     has_perm = await RBACService.has_permission(
-        session, guild_id, current_user["id"], "manage_roles"
+        session, guild_id, current_user["id"], "manage_roles",
+        discord_access_token=current_user.get("access_token"),
     )
     if not has_perm:
         raise HTTPException(status_code=403, detail="Forbidden")

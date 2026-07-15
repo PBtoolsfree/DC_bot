@@ -23,7 +23,10 @@ async def get_settings(
     """Fetch configuration for a specific module."""
     # RBAC check (simplified: must have specific permission for that module)
     perm_name = f"manage_{module_name}" if module_name != "automod" else "manage_automod"
-    has_perm = await RBACService.has_permission(session, guild_id, current_user["id"], perm_name)
+    has_perm = await RBACService.has_permission(
+        session, guild_id, current_user["id"], perm_name,
+        discord_access_token=current_user.get("access_token"),
+    )
     if not has_perm:
         raise HTTPException(status_code=403, detail="Forbidden")
 
@@ -44,7 +47,10 @@ async def update_settings(
 ) -> dict[str, Any]:
     """Update configuration for a specific module."""
     perm_name = f"manage_{module_name}" if module_name != "automod" else "manage_automod"
-    has_perm = await RBACService.has_permission(session, guild_id, current_user["id"], perm_name)
+    has_perm = await RBACService.has_permission(
+        session, guild_id, current_user["id"], perm_name,
+        discord_access_token=current_user.get("access_token"),
+    )
     if not has_perm:
         raise HTTPException(status_code=403, detail="Forbidden")
 

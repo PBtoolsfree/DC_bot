@@ -21,7 +21,8 @@ async def get_welcome_settings(
     session: AsyncSession = Depends(get_db),
 ) -> WelcomeSettingsSchema | dict:
     has_perm = await RBACService.has_permission(
-        session, guild_id, current_user["id"], "manage_welcome"
+        session, guild_id, current_user["id"], "manage_welcome",
+        discord_access_token=current_user.get("access_token"),
     )
     if not has_perm:
         raise HTTPException(status_code=403, detail="Forbidden")
