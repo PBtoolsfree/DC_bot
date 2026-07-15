@@ -21,7 +21,10 @@ async def get_xp_settings(
     session: AsyncSession = Depends(get_db),
 ) -> XPSettingsSchema | dict:
     has_perm = await RBACService.has_permission(
-        session, guild_id, current_user["id"], "manage_xp",
+        session,
+        guild_id,
+        current_user["id"],
+        "manage_xp",
         discord_access_token=current_user.get("access_token"),
     )
     if not has_perm:
@@ -48,7 +51,10 @@ async def get_xp_leaderboard(
     session: AsyncSession = Depends(get_db),
 ) -> list[dict[str, Any]]:
     has_perm = await RBACService.has_permission(
-        session, guild_id, current_user["id"], "view_analytics",
+        session,
+        guild_id,
+        current_user["id"],
+        "view_analytics",
         discord_access_token=current_user.get("access_token"),
     )
     if not has_perm:

@@ -22,7 +22,10 @@ async def get_ticket_analytics(
 ) -> Any:
     """Fetch ticket analytics for the dashboard."""
     has_perm = await RBACService.has_permission(
-        session, guild_id, current_user["id"], "view_analytics",
+        session,
+        guild_id,
+        current_user["id"],
+        "view_analytics",
         discord_access_token=current_user.get("access_token"),
     )
     if not has_perm:
@@ -65,7 +68,10 @@ async def get_ticket_panels(
 ) -> Any:
     """Fetch all ticket panels."""
     has_perm = await RBACService.has_permission(
-        session, guild_id, current_user["id"], "manage_tickets",
+        session,
+        guild_id,
+        current_user["id"],
+        "manage_tickets",
         discord_access_token=current_user.get("access_token"),
     )
     if not has_perm:

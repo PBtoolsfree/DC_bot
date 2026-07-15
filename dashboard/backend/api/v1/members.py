@@ -24,7 +24,10 @@ async def list_members(
     """List all users who have explicit dashboard access to this guild."""
     # 1. Verify caller has permission to view members
     is_admin = await RBACService.has_permission(
-        session, guild_id, current_user["id"], "manage_dashboard_roles",
+        session,
+        guild_id,
+        current_user["id"],
+        "manage_dashboard_roles",
         discord_access_token=current_user.get("access_token"),
     )
     if not is_admin:
@@ -56,7 +59,10 @@ async def add_member(
 ) -> dict[str, Any]:
     """Grant dashboard access to a Discord user."""
     is_admin = await RBACService.has_permission(
-        session, guild_id, current_user["id"], "manage_dashboard_roles",
+        session,
+        guild_id,
+        current_user["id"],
+        "manage_dashboard_roles",
         discord_access_token=current_user.get("access_token"),
     )
     if not is_admin:

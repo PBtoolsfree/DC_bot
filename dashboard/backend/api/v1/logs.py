@@ -25,7 +25,10 @@ async def get_logs(
 ) -> dict[str, Any]:
     """Search and paginate logs for the dashboard."""
     has_perm = await RBACService.has_permission(
-        session, guild_id, current_user["id"], "manage_logs",
+        session,
+        guild_id,
+        current_user["id"],
+        "manage_logs",
         discord_access_token=current_user.get("access_token"),
     )
     if not has_perm:

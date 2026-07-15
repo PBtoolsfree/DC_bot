@@ -25,7 +25,10 @@ async def get_verification_settings(
 ) -> Any:
     """Fetch verification settings for the dashboard."""
     has_perm = await RBACService.has_permission(
-        session, guild_id, current_user["id"], "manage_verification",
+        session,
+        guild_id,
+        current_user["id"],
+        "manage_verification",
         discord_access_token=current_user.get("access_token"),
     )
     if not has_perm:
@@ -77,7 +80,10 @@ async def update_verification_settings(
 ) -> Any:
     """Update verification configuration."""
     has_perm = await RBACService.has_permission(
-        session, guild_id, current_user["id"], "manage_verification",
+        session,
+        guild_id,
+        current_user["id"],
+        "manage_verification",
         discord_access_token=current_user.get("access_token"),
     )
     if not has_perm:

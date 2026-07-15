@@ -23,7 +23,10 @@ async def list_backups(
 ) -> list[BackupResponse]:
     """List all backups for a guild."""
     has_perm = await RBACService.has_permission(
-        session, guild_id, current_user["id"], "manage_backups",
+        session,
+        guild_id,
+        current_user["id"],
+        "manage_backups",
         discord_access_token=current_user.get("access_token"),
     )
     if not has_perm:
