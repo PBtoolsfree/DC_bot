@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/lib/api/client";
-import { Shield, Save, AlertCircle } from "lucide-react";
+import { Shield, Save, AlertCircle, CheckCircle2 } from "lucide-react";
 
 interface VerificationSettings {
   guild_id: string;
@@ -26,6 +27,23 @@ interface VerificationSettings {
   kick_on_timeout: boolean;
 }
 
+const DEFAULT_SETTINGS: VerificationSettings = {
+  guild_id: "",
+  enabled: false,
+  verification_type: "button",
+  quarantine_role_id: "",
+  verified_role_id: "",
+  temporary_role_id: "",
+  verification_channel_id: "",
+  log_channel_id: "",
+  timeout_minutes: 10,
+  max_attempts: 3,
+  risk_threshold_high: 70,
+  language: "en-US",
+  delete_failed_messages: true,
+  kick_on_timeout: false,
+};
+
 export default function SecurityPage({ params }: { params: Promise<{ guildId: string }> }) {
   const { guildId } = use(params);
   
@@ -34,6 +52,7 @@ export default function SecurityPage({ params }: { params: Promise<{ guildId: st
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [isNewConfig, setIsNewConfig] = useState(false);
 
   useEffect(() => {
     fetchSettings();
@@ -42,12 +61,16 @@ export default function SecurityPage({ params }: { params: Promise<{ guildId: st
   const fetchSettings = async () => {
     try {
       setLoading(true);
+      setError(null);
       const res = await api.get(`/verification/${guildId}`);
       setSettings(res.data);
-      setError(null);
-    } catch (err) {
+      setIsNewConfig(false);
+    } catch (err: unknown) {
       console.error(err);
-      setError("Failed to load verification settings.");
+      // Graceful fallback: if API fails (404, 500, etc.), show the form with defaults
+      // so the user can still configure and save new settings
+      setSettings({ ...DEFAULT_SETTINGS, guild_id: guildId });
+      setIsNewConfig(true);
     } finally {
       setLoading(false);
     }
@@ -63,6 +86,7 @@ export default function SecurityPage({ params }: { params: Promise<{ guildId: st
       
       const res = await api.put(`/verification/${guildId}`, settings);
       setSettings(res.data);
+      setIsNewConfig(false);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
@@ -73,14 +97,25 @@ export default function SecurityPage({ params }: { params: Promise<{ guildId: st
     }
   };
 
-  const updateSetting = (key: keyof VerificationSettings, value: any) => {
+  const updateSetting = (key: keyof VerificationSettings, value: unknown) => {
     setSettings((prev) => (prev ? { ...prev, [key]: value } : null));
   };
 
   if (loading) {
     return (
-      <div className="flex h-[400px] items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="space-y-6 max-w-5xl mx-auto">
+        <div className="flex items-center justify-between">
+          <div className="space-y-2">
+            <Skeleton className="h-9 w-64" />
+            <Skeleton className="h-4 w-96" />
+          </div>
+          <Skeleton className="h-10 w-32" />
+        </div>
+        <div className="grid gap-6 md:grid-cols-2">
+          <Skeleton className="h-64 rounded-xl" />
+          <Skeleton className="h-64 rounded-xl" />
+          <Skeleton className="h-48 rounded-xl md:col-span-2" />
+        </div>
       </div>
     );
   }
@@ -97,7 +132,7 @@ export default function SecurityPage({ params }: { params: Promise<{ guildId: st
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between flex-wrap gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
             <Shield className="h-8 w-8 text-primary" />
@@ -113,16 +148,23 @@ export default function SecurityPage({ params }: { params: Promise<{ guildId: st
         </Button>
       </div>
 
+      {isNewConfig && (
+        <div className="bg-blue-500/15 text-blue-600 p-3 rounded-md flex items-center gap-2">
+          <Shield className="h-4 w-4 flex-shrink-0" />
+          No existing configuration found. Configure your settings below and save to create them.
+        </div>
+      )}
+
       {error && (
         <div className="bg-destructive/15 text-destructive p-3 rounded-md flex items-center gap-2">
-          <AlertCircle className="h-4 w-4" />
+          <AlertCircle className="h-4 w-4 flex-shrink-0" />
           {error}
         </div>
       )}
 
       {success && (
         <div className="bg-green-500/15 text-green-500 p-3 rounded-md flex items-center gap-2">
-          <Shield className="h-4 w-4" />
+          <CheckCircle2 className="h-4 w-4 flex-shrink-0" />
           Settings saved successfully!
         </div>
       )}
